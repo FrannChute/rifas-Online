@@ -7,7 +7,10 @@ import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { EmptyState } from "@/components/empty-state";
 import { SiteNav } from "@/components/site-nav";
 import { getPlatformSettings } from "@/features/raffles/service";
-import { listPublicWinnersByRaffleSlug } from "@/features/winners/service";
+import {
+  getPublicRaffleWinnerInfo,
+  listPublicWinnersByRaffleSlug,
+} from "@/features/winners/service";
 import { isDatabaseUnavailableError } from "@/lib/errors";
 import { formatDateTime } from "@/lib/format";
 
@@ -21,14 +24,16 @@ type RaffleWinnersPageProps = {
 
 async function loadRaffleWinnersData(slug: string) {
   try {
-    const [settings, winners] = await Promise.all([
+    const [settings, raffle, winners] = await Promise.all([
       getPlatformSettings(),
+      getPublicRaffleWinnerInfo(slug),
       listPublicWinnersByRaffleSlug(slug),
     ]);
 
     return {
       ok: true as const,
       platformName: settings?.platformName ?? "Rifas Online",
+      raffle,
       winners,
     };
   } catch (error) {
@@ -55,7 +60,10 @@ export default async function RaffleWinnersPage({ params }: RaffleWinnersPagePro
     );
   }
 
-  const raffleName = data.winners[0]?.raffle.name ?? "Rifa";
+  const raffleName = data.raffle?.name ?? data.winners[0]?.raffle.name ?? "Rifa";
+  const drawDate = data.raffle?.drawScheduledAt
+    ? formatDateTime(data.raffle.drawScheduledAt)
+    : "la fecha publicada";
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -101,7 +109,7 @@ export default async function RaffleWinnersPage({ params }: RaffleWinnersPagePro
           </div>
         ) : (
           <EmptyState
-            description="Esta rifa todavia no tiene ganadores publicados."
+            description={`Los ganadores estaran disponibles luego de realizar el sorteo, previsto para ${drawDate}.`}
             title="Sin ganadores publicados"
           />
         )}

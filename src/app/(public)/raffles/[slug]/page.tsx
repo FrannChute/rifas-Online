@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { SiteNav } from "@/components/site-nav";
 import { reserveTicketsWithStateAction } from "@/features/orders/public-actions";
+import { PrizeImage } from "@/features/prizes/components/prize-image";
 import { TicketGridPicker } from "@/features/tickets/components/ticket-grid-picker";
 import { type TicketStatusValue } from "@/features/tickets/status";
 import { getPlatformSettings, getPublicRaffleBySlug } from "@/features/raffles/service";
@@ -81,7 +82,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
   const { raffle } = data;
   const ticketCount = raffle.endNumber - raffle.startNumber + 1;
   const soldCount = publicPaidCount(raffle.ticketStats);
-  const publicPaymentMethods = raffle.paymentMethods.filter((method) => method.type !== "CASH");
+  const publicPaymentMethods = raffle.paymentMethods;
   const publicTicketStats = [
     { label: "Disponible", value: statValue(raffle.ticketStats, "AVAILABLE") },
     { label: "Reservado", value: publicReservedCount(raffle.ticketStats) },
@@ -159,11 +160,9 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                   key={prize.id}
                   className="overflow-hidden rounded-md border border-blue-100 bg-white transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md"
                 >
-                  {prize.imageUrl ? (
-                    <div className="relative h-20 overflow-hidden bg-blue-50 sm:h-24">
-                      <img alt="" className="size-full object-contain" src={prize.imageUrl} />
-                    </div>
-                  ) : null}
+                  <div className="relative h-20 overflow-hidden bg-blue-50 sm:h-24">
+                    <PrizeImage name={prize.name} position={prize.position} src={prize.imageUrl} />
+                  </div>
                   <div className="flex items-start gap-2 p-2.5">
                     <Badge
                       className="border-orange-200 bg-orange-50 text-orange-800"
@@ -231,6 +230,11 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                   <p className="font-medium">{method.displayName}</p>
                   {method.instructions ? (
                     <p className="mt-1 text-muted-foreground">{method.instructions}</p>
+                  ) : null}
+                  {method.type === "CASH" ? (
+                    <p className="mt-1 text-muted-foreground">
+                      Si pagas en efectivo, no necesitas subir comprobante.
+                    </p>
                   ) : null}
                 </div>
               ))}

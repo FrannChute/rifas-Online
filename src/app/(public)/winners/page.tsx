@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { EmptyState } from "@/components/empty-state";
 import { SiteNav } from "@/components/site-nav";
-import { getPlatformSettings } from "@/features/raffles/service";
+import { getPlatformSettings, listPublicRaffles } from "@/features/raffles/service";
 import { listPublicWinners } from "@/features/winners/service";
 import { isDatabaseUnavailableError } from "@/lib/errors";
 import { formatDateTime } from "@/lib/format";
@@ -15,11 +15,16 @@ export const dynamic = "force-dynamic";
 
 async function loadWinnersData() {
   try {
-    const [settings, winners] = await Promise.all([getPlatformSettings(), listPublicWinners()]);
+    const [settings, raffles, winners] = await Promise.all([
+      getPlatformSettings(),
+      listPublicRaffles(),
+      listPublicWinners(),
+    ]);
 
     return {
       ok: true as const,
       platformName: settings?.platformName ?? "Rifas Online",
+      nextDrawDate: raffles[0]?.drawScheduledAt ?? null,
       winners,
     };
   } catch (error) {
@@ -93,7 +98,9 @@ export default async function WinnersPage() {
           </div>
         ) : (
           <EmptyState
-            description="Cuando completes y publiques sorteos, los ganadores apareceran en esta seccion."
+            description={`Los ganadores estaran disponibles luego de realizar el sorteo${
+              data.nextDrawDate ? `, previsto para ${formatDateTime(data.nextDrawDate)}` : ""
+            }.`}
             title="Todavia no hay ganadores publicados"
           />
         )}

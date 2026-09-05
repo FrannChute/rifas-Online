@@ -229,10 +229,6 @@ export function TicketGridPicker({
                   <Label htmlFor="phone">Telefono</Label>
                   <Input id="phone" name="phone" required />
                 </div>
-                <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
-                  <Label htmlFor="dni">DNI opcional</Label>
-                  <Input id="dni" name="dni" />
-                </div>
               </div>
               {actionState.error ? (
                 <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm leading-5 text-destructive">

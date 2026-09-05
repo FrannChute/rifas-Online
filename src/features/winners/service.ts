@@ -1,5 +1,19 @@
 import { prisma } from "@/lib/db";
 
+export async function getPublicRaffleWinnerInfo(slug: string) {
+  return prisma.raffle.findFirst({
+    where: {
+      slug,
+      deletedAt: null,
+    },
+    select: {
+      name: true,
+      slug: true,
+      drawScheduledAt: true,
+    },
+  });
+}
+
 export async function listPublicWinners() {
   return prisma.winner.findMany({
     where: {

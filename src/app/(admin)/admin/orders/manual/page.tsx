@@ -102,10 +102,6 @@ export default async function ManualCashSalePage() {
               <Label htmlFor="phone">Telefono</Label>
               <Input id="phone" name="phone" required />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="dni">DNI opcional</Label>
-              <Input id="dni" name="dni" />
-            </div>
           </section>
 
           <div className="flex justify-end">
