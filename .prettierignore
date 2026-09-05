@@ -1,0 +1,17 @@
+.next
+AGENTS.md
+coverage
+node_modules
+out
+playwright-report
+pnpm-lock.yaml
+src/generated/prisma
+test-results
+tmp-next-bootstrap
+tmp-prisma-init
+.appdata
+.cache
+.localappdata
+.pnpm-cache
+.pnpm-state
+.pnpm-store

@@ -1,0 +1,593 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum RaffleStatus {
+  DRAFT
+  PUBLISHED
+  OPEN
+  PAUSED
+  CLOSED
+  DRAWING
+  DRAWN
+  ARCHIVED
+}
+
+enum PaymentMethodType {
+  MERCADO_PAGO
+  BANK_TRANSFER
+  CASH
+}
+
+enum TicketStatus {
+  AVAILABLE
+  RESERVED
+  PAYMENT_PENDING
+  PAID
+  WINNER
+  CANCELLED
+}
+
+enum TicketHistoryEvent {
+  CREATED
+  RESERVED
+  RELEASED
+  RESERVATION_EXPIRED
+  PAYMENT_PENDING
+  PAID
+  CANCELLED
+  WINNER_ASSIGNED
+  ADMIN_UPDATED
+}
+
+enum OrderStatus {
+  DRAFT
+  RESERVED
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  MANUAL
+  MERCADO_PAGO
+}
+
+enum PaymentStatus {
+  PENDING
+  MANUAL_REVIEW
+  APPROVED
+  REJECTED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+enum DrawStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  CANCELLED
+}
+
+enum MediaAssetType {
+  IMAGE
+  DOCUMENT
+  RECEIPT
+}
+
+enum MediaVisibility {
+  PUBLIC
+  PRIVATE
+}
+
+model User {
+  id            String     @id @default(cuid())
+  name          String?
+  email         String     @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  role          UserRole   @default(CUSTOMER)
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
+
+  accounts         Account[]
+  sessions         Session[]
+  participants     Participant[]
+  createdRaffles   Raffle[]        @relation("RaffleCreatedBy")
+  auditLogs        AuditLog[]      @relation("AuditActor")
+  reviewedPayments Payment[]       @relation("PaymentReviewer")
+  createdDraws     Draw[]          @relation("DrawCreatedBy")
+  mediaAssets      MediaAsset[]    @relation("MediaOwner")
+  ticketHistory    TicketHistory[]
+
+  @@index([role])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Participant {
+  id        String    @id @default(cuid())
+  userId    String?
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  whatsapp  String?
+  dni       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  user            User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  orders          Order[]
+  payments        Payment[]
+  tickets         Ticket[]
+  ticketHistory   TicketHistory[]
+  eligibleTickets DrawEligibleTicket[]
+  winners         Winner[]
+  auditLogs       AuditLog[]
+
+  @@unique([email])
+  @@unique([dni])
+  @@index([userId])
+  @@index([lastName, firstName])
+  @@index([phone])
+  @@index([whatsapp])
+  @@index([deletedAt])
+}
+
+model Raffle {
+  id                              String       @id @default(cuid())
+  slug                            String       @unique
+  name                            String
+  description                     String
+  imageUrl                        String?
+  status                          RaffleStatus @default(DRAFT)
+  price                           Decimal      @db.Decimal(12, 2)
+  currency                        String       @default("ARS")
+  startNumber                     Int
+  endNumber                       Int
+  numberPadding                   Int          @default(0)
+  startsAt                        DateTime?
+  closesAt                        DateTime?
+  drawScheduledAt                 DateTime?
+  reservationDurationMinutes      Int          @default(10)
+  allowGuestPurchase              Boolean      @default(true)
+  allowAccountPurchase            Boolean      @default(true)
+  allowMultipleWinsPerTicket      Boolean      @default(false)
+  allowMultipleWinsPerParticipant Boolean      @default(false)
+  winnerRules                     String?
+  terms                           String?
+  contactEmail                    String?
+  contactPhone                    String?
+  contactWhatsapp                 String?
+  createdById                     String?
+  createdAt                       DateTime     @default(now())
+  updatedAt                       DateTime     @updatedAt
+  deletedAt                       DateTime?
+
+  createdBy       User?                 @relation("RaffleCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  paymentMethods  RafflePaymentMethod[]
+  tickets         Ticket[]
+  orders          Order[]
+  payments        Payment[]
+  prizes          Prize[]
+  draws           Draw[]
+  eligibleTickets DrawEligibleTicket[]
+  winners         Winner[]
+  mediaAssets     MediaAsset[]
+  auditLogs       AuditLog[]
+  ticketHistory   TicketHistory[]
+
+  @@index([status])
+  @@index([startsAt])
+  @@index([closesAt])
+  @@index([drawScheduledAt])
+  @@index([deletedAt])
+}
+
+model RafflePaymentMethod {
+  id            String            @id @default(cuid())
+  raffleId      String
+  type          PaymentMethodType
+  displayName   String
+  instructions  String?
+  active        Boolean           @default(true)
+  sortOrder     Int               @default(0)
+  bankName      String?
+  accountHolder String?
+  alias         String?
+  cbu           String?
+  cvu           String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  deletedAt     DateTime?
+
+  raffle Raffle @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+
+  @@unique([raffleId, type])
+  @@index([raffleId, active])
+  @@index([deletedAt])
+}
+
+model Ticket {
+  id                 String       @id @default(cuid())
+  raffleId           String
+  number             Int
+  label              String
+  status             TicketStatus @default(AVAILABLE)
+  reservedUntil      DateTime?
+  participantId      String?
+  currentOrderId     String?
+  currentPaymentId   String?
+  cancellationReason String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  raffle         Raffle               @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  participant    Participant?         @relation(fields: [participantId], references: [id], onDelete: SetNull)
+  currentOrder   Order?               @relation("CurrentTicketOrder", fields: [currentOrderId], references: [id], onDelete: SetNull)
+  currentPayment Payment?             @relation("CurrentTicketPayment", fields: [currentPaymentId], references: [id], onDelete: SetNull)
+  orderItems     OrderItem[]
+  history        TicketHistory[]
+  eligibleIn     DrawEligibleTicket[]
+  winners        Winner[]
+
+  @@unique([raffleId, number])
+  @@index([raffleId, label])
+  @@index([raffleId, status])
+  @@index([reservedUntil])
+  @@index([participantId])
+  @@index([currentOrderId])
+  @@index([currentPaymentId])
+}
+
+model TicketHistory {
+  id            String             @id @default(cuid())
+  ticketId      String
+  raffleId      String
+  fromStatus    TicketStatus?
+  toStatus      TicketStatus
+  event         TicketHistoryEvent
+  actorUserId   String?
+  participantId String?
+  orderId       String?
+  paymentId     String?
+  reason        String?
+  metadata      Json?
+  createdAt     DateTime           @default(now())
+
+  ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  raffle      Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  actorUser   User?        @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+  order       Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  payment     Payment?     @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([ticketId, createdAt])
+  @@index([raffleId, createdAt])
+  @@index([event])
+  @@index([orderId])
+  @@index([paymentId])
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  publicCode    String      @unique
+  raffleId      String
+  participantId String
+  status        OrderStatus @default(DRAFT)
+  currency      String
+  totalAmount   Decimal     @db.Decimal(12, 2)
+  expiresAt     DateTime?
+  paidAt        DateTime?
+  cancelledAt   DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  raffle          Raffle               @relation(fields: [raffleId], references: [id], onDelete: Restrict)
+  participant     Participant          @relation(fields: [participantId], references: [id], onDelete: Restrict)
+  items           OrderItem[]
+  payments        Payment[]
+  currentTickets  Ticket[]             @relation("CurrentTicketOrder")
+  ticketHistory   TicketHistory[]
+  eligibleTickets DrawEligibleTicket[]
+
+  @@index([raffleId, status])
+  @@index([participantId])
+  @@index([expiresAt])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  ticketId  String
+  number    Int
+  label     String
+  unitPrice Decimal  @db.Decimal(12, 2)
+  currency  String
+  createdAt DateTime @default(now())
+
+  order  Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+
+  @@unique([orderId, ticketId])
+  @@index([ticketId])
+  @@index([orderId])
+}
+
+model Payment {
+  id                String            @id @default(cuid())
+  raffleId          String
+  orderId           String?
+  participantId     String?
+  provider          PaymentProvider
+  method            PaymentMethodType
+  status            PaymentStatus     @default(PENDING)
+  amount            Decimal           @db.Decimal(12, 2)
+  currency          String
+  externalId        String?
+  externalReference String?
+  receiptAssetId    String?
+  reviewedById      String?
+  reviewedAt        DateTime?
+  rejectionReason   String?
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  raffle         Raffle          @relation(fields: [raffleId], references: [id], onDelete: Restrict)
+  order          Order?          @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  participant    Participant?    @relation(fields: [participantId], references: [id], onDelete: SetNull)
+  receiptAsset   MediaAsset?     @relation("PaymentReceipt", fields: [receiptAssetId], references: [id], onDelete: SetNull)
+  reviewedBy     User?           @relation("PaymentReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  currentTickets Ticket[]        @relation("CurrentTicketPayment")
+  ticketHistory  TicketHistory[]
+
+  @@unique([provider, externalId])
+  @@unique([externalReference])
+  @@index([raffleId, status])
+  @@index([orderId])
+  @@index([participantId])
+  @@index([method, status])
+  @@index([createdAt])
+}
+
+model Prize {
+  id            String    @id @default(cuid())
+  raffleId      String
+  name          String
+  description   String?
+  imageUrl      String?
+  mediaAssetId  String?
+  monetaryValue Decimal?  @db.Decimal(12, 2)
+  position      Int
+  active        Boolean   @default(true)
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  raffle     Raffle      @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  mediaAsset MediaAsset? @relation("PrizeMedia", fields: [mediaAssetId], references: [id], onDelete: SetNull)
+  winners    Winner[]
+
+  @@unique([raffleId, position])
+  @@index([raffleId, position])
+  @@index([raffleId, active])
+  @@index([deletedAt])
+}
+
+model Draw {
+  id                  String     @id @default(cuid())
+  raffleId            String
+  status              DrawStatus @default(PENDING)
+  eligibleTicketCount Int        @default(0)
+  snapshotHash        String?
+  algorithm           String
+  seedCommitment      String?
+  seed                String?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdById         String?
+  metadata            Json?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  raffle          Raffle               @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  createdBy       User?                @relation("DrawCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  eligibleTickets DrawEligibleTicket[]
+  winners         Winner[]
+
+  @@index([raffleId, status])
+  @@index([createdAt])
+}
+
+model DrawEligibleTicket {
+  id             String       @id @default(cuid())
+  drawId         String
+  raffleId       String
+  ticketId       String
+  participantId  String?
+  orderId        String?
+  number         Int
+  label          String
+  snapshotStatus TicketStatus
+  createdAt      DateTime     @default(now())
+
+  draw        Draw         @relation(fields: [drawId], references: [id], onDelete: Cascade)
+  raffle      Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+  order       Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@unique([drawId, ticketId])
+  @@index([drawId, number])
+  @@index([raffleId])
+  @@index([participantId])
+}
+
+model Winner {
+  id            String    @id @default(cuid())
+  raffleId      String
+  drawId        String
+  prizeId       String
+  ticketId      String
+  participantId String?
+  position      Int
+  number        Int
+  label         String
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+
+  raffle      Raffle       @relation(fields: [raffleId], references: [id], onDelete: Cascade)
+  draw        Draw         @relation(fields: [drawId], references: [id], onDelete: Cascade)
+  prize       Prize        @relation(fields: [prizeId], references: [id], onDelete: Restrict)
+  ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Restrict)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+
+  @@unique([drawId, prizeId])
+  @@unique([drawId, position])
+  @@index([raffleId])
+  @@index([ticketId])
+  @@index([participantId])
+}
+
+model MediaAsset {
+  id           String          @id @default(cuid())
+  ownerId      String?
+  raffleId     String?
+  type         MediaAssetType
+  storageKey   String          @unique
+  url          String?
+  originalName String?
+  mimeType     String
+  sizeBytes    Int
+  visibility   MediaVisibility @default(PRIVATE)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  deletedAt    DateTime?
+
+  owner           User?              @relation("MediaOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  raffle          Raffle?            @relation(fields: [raffleId], references: [id], onDelete: SetNull)
+  paymentReceipts Payment[]          @relation("PaymentReceipt")
+  prizeImages     Prize[]            @relation("PrizeMedia")
+  platformLogoFor PlatformSettings[] @relation("PlatformLogo")
+  platformIconFor PlatformSettings[] @relation("PlatformFavicon")
+
+  @@index([ownerId])
+  @@index([raffleId])
+  @@index([type])
+  @@index([visibility])
+  @@index([deletedAt])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  actorUserId   String?
+  raffleId      String?
+  participantId String?
+  action        String
+  entityType    String
+  entityId      String
+  ipAddress     String?
+  userAgent     String?
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  actor       User?        @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  raffle      Raffle?      @relation(fields: [raffleId], references: [id], onDelete: SetNull)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId])
+  @@index([raffleId])
+  @@index([participantId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model PlatformSettings {
+  id                                String   @id @default("default")
+  platformName                      String   @default("Rifas Online")
+  logoAssetId                       String?
+  faviconAssetId                    String?
+  primaryColor                      String   @default("#0f172a")
+  accentColor                       String   @default("#0ea5e9")
+  supportEmail                      String?
+  supportWhatsapp                   String?
+  bankAlias                         String?
+  bankCbu                           String?
+  bankCvu                           String?
+  bankAccountHolder                 String?
+  bankName                          String?
+  terms                             String?
+  privacyPolicy                     String?
+  defaultReservationDurationMinutes Int      @default(10)
+  createdAt                         DateTime @default(now())
+  updatedAt                         DateTime @updatedAt
+
+  logoAsset    MediaAsset? @relation("PlatformLogo", fields: [logoAssetId], references: [id], onDelete: SetNull)
+  faviconAsset MediaAsset? @relation("PlatformFavicon", fields: [faviconAssetId], references: [id], onDelete: SetNull)
+}

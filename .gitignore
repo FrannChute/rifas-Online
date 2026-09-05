@@ -1,0 +1,64 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# build output
+/.next/
+/out/
+/build
+
+# generated
+/src/generated/prisma
+next-env.d.ts
+*.tsbuildinfo
+
+# tests
+/coverage
+/playwright-report
+/test-results
+/.vitest
+
+# local env
+.env
+.env.*
+!.env.example
+
+# local package-manager caches
+/.appdata
+/.cache
+/.localappdata
+/.pglite
+/.pnpm-cache
+/.pnpm-state
+/.pnpm-store
+
+# temporary bootstrap folders
+/tmp-next-bootstrap
+/tmp-prisma-init
+
+# ChatGPT project reference files
+/AGENTS.md
+/sources
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# private local uploads
+/storage
+
+# misc
+.DS_Store
+*.pem
+
+# hosting
+.vercel

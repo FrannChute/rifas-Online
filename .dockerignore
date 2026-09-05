@@ -1,0 +1,15 @@
+.next
+coverage
+node_modules
+playwright-report
+src/generated/prisma
+test-results
+.appdata
+.cache
+.localappdata
+.pnpm-cache
+.pnpm-state
+.pnpm-store
+.env
+.env.*
+!.env.example
