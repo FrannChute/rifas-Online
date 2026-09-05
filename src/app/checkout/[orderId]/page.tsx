@@ -7,8 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiteNav } from "@/components/site-nav";
 import { getCheckoutOrder } from "@/features/orders/service";
+import { CashPaymentForm } from "@/features/payments/components/cash-payment-form";
 import { PaymentReceiptForm } from "@/features/payments/components/payment-receipt-form";
-import { submitPaymentReceiptWithStateAction } from "@/features/payments/public-actions";
+import {
+  submitCashPaymentWithStateAction,
+  submitPaymentReceiptWithStateAction,
+} from "@/features/payments/public-actions";
 import { PaymentMethodType } from "@/generated/prisma/client";
 import { isDatabaseUnavailableError } from "@/lib/errors";
 import { formatDateTime, formatMoney } from "@/lib/format";
@@ -58,6 +62,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const bankMethod = order.raffle.paymentMethods.find(
     (method) => method.type === PaymentMethodType.BANK_TRANSFER,
   );
+  const cashMethod = order.raffle.paymentMethods.find(
+    (method) => method.type === PaymentMethodType.CASH,
+  );
   const receiptMethods = order.raffle.paymentMethods.filter(
     (method) =>
       method.type === PaymentMethodType.BANK_TRANSFER ||
@@ -65,6 +72,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   );
   const latestPayment = order.payments[0];
   const uploadAction = submitPaymentReceiptWithStateAction.bind(null, order.id);
+  const cashAction = submitCashPaymentWithStateAction.bind(null, order.id);
   const isCashPayment = latestPayment?.method === PaymentMethodType.CASH;
 
   return (
@@ -197,7 +205,10 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                 ) : null}
               </div>
             ) : (
-              <PaymentReceiptForm action={uploadAction} methods={receiptMethods} />
+              <>
+                {cashMethod ? <CashPaymentForm action={cashAction} /> : null}
+                <PaymentReceiptForm action={uploadAction} methods={receiptMethods} />
+              </>
             )}
           </aside>
         </div>

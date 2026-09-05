@@ -154,6 +154,135 @@ export async function submitBankTransferPayment(orderId: string, formData: FormD
   });
 }
 
+export async function submitCashPayment(orderId: string) {
+  return prisma.$transaction(
+    async (tx) => {
+      const order = await tx.order.findUniqueOrThrow({
+        where: { id: orderId },
+        include: {
+          raffle: {
+            include: {
+              paymentMethods: {
+                where: {
+                  active: true,
+                  deletedAt: null,
+                },
+              },
+            },
+          },
+          items: {
+            include: {
+              ticket: true,
+            },
+          },
+        },
+      });
+
+      await releaseExpiredReservations(tx, order.raffleId);
+
+      if (order.status !== OrderStatus.RESERVED && order.status !== OrderStatus.PENDING_PAYMENT) {
+        throw new Error("La orden no acepta pago en efectivo en este estado.");
+      }
+
+      if (order.expiresAt && order.expiresAt < new Date()) {
+        throw new Error("La reserva expiro. Vuelve a seleccionar los numeros.");
+      }
+
+      const cashMethod = order.raffle.paymentMethods.find(
+        (method) => method.type === PaymentMethodType.CASH,
+      );
+
+      if (!cashMethod) {
+        throw new Error("El pago en efectivo no esta activo para esta rifa.");
+      }
+
+      const now = new Date();
+      const payment = await tx.payment.upsert({
+        where: { externalReference: `public-cash-${order.publicCode}` },
+        update: {
+          method: PaymentMethodType.CASH,
+          status: PaymentStatus.APPROVED,
+          amount: order.totalAmount,
+          currency: order.currency,
+          reviewedAt: now,
+          rejectionReason: null,
+        },
+        create: {
+          raffleId: order.raffleId,
+          orderId: order.id,
+          participantId: order.participantId,
+          provider: PaymentProvider.MANUAL,
+          method: PaymentMethodType.CASH,
+          status: PaymentStatus.APPROVED,
+          amount: order.totalAmount,
+          currency: order.currency,
+          externalReference: `public-cash-${order.publicCode}`,
+          reviewedAt: now,
+        },
+      });
+
+      await tx.order.update({
+        where: { id: order.id },
+        data: {
+          status: OrderStatus.PAID,
+          paidAt: now,
+          expiresAt: null,
+        },
+      });
+
+      const updated = await tx.ticket.updateMany({
+        where: {
+          id: { in: order.items.map((item) => item.ticketId) },
+          currentOrderId: order.id,
+          status: { in: [TicketStatus.RESERVED, TicketStatus.PAYMENT_PENDING] },
+        },
+        data: {
+          status: TicketStatus.PAID,
+          currentPaymentId: payment.id,
+          reservedUntil: null,
+        },
+      });
+
+      if (updated.count !== order.items.length) {
+        throw new Error("No se pudo confirmar efectivo porque algun numero cambio de estado.");
+      }
+
+      await tx.ticketHistory.createMany({
+        data: order.items.map((item) => ({
+          ticketId: item.ticketId,
+          raffleId: order.raffleId,
+          fromStatus: item.ticket.status,
+          toStatus: TicketStatus.PAID,
+          event: TicketHistoryEvent.PAID,
+          participantId: order.participantId,
+          orderId: order.id,
+          paymentId: payment.id,
+          reason: "Pago en efectivo confirmado por el comprador",
+        })),
+      });
+
+      await tx.auditLog.create({
+        data: {
+          raffleId: order.raffleId,
+          participantId: order.participantId,
+          action: "public_cash_payment.created",
+          entityType: "Payment",
+          entityId: payment.id,
+          metadata: {
+            order: order.publicCode,
+            ticketCount: order.items.length,
+          },
+        },
+      });
+
+      return payment;
+    },
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+    },
+  );
+}
+
 export async function listAdminPayments() {
   return prisma.payment.findMany({
     orderBy: { createdAt: "desc" },
