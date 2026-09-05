@@ -1,4 +1,9 @@
-import { Prisma, TicketHistoryEvent, TicketStatus } from "@/generated/prisma/client";
+import {
+  PaymentMethodType,
+  Prisma,
+  TicketHistoryEvent,
+  TicketStatus,
+} from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
 
 const bolivarSlug = "gran-rifa-solidaria-u17-de-bolivar";
@@ -41,13 +46,32 @@ export async function repairBolivarPrizeImages() {
       });
     }
 
+    await tx.rafflePaymentMethod.upsert({
+      where: { raffleId_type: { raffleId: raffle.id, type: PaymentMethodType.CASH } },
+      update: {
+        displayName: "Efectivo",
+        instructions: "Paga personalmente. No necesitas subir comprobante.",
+        active: true,
+        sortOrder: 2,
+        deletedAt: null,
+      },
+      create: {
+        raffleId: raffle.id,
+        type: PaymentMethodType.CASH,
+        displayName: "Efectivo",
+        instructions: "Paga personalmente. No necesitas subir comprobante.",
+        active: true,
+        sortOrder: 2,
+      },
+    });
+
     await tx.auditLog.create({
       data: {
         raffleId: raffle.id,
         action: "maintenance.prize_images_repaired",
         entityType: "Raffle",
         entityId: raffle.id,
-        metadata: { prizes: prizes.length },
+        metadata: { prizes: prizes.length, cashPaymentEnabled: true },
       },
     });
 

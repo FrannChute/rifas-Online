@@ -1,13 +1,8 @@
-"use client";
-
-/* eslint-disable @next/next/no-img-element */
-
-import { useState } from "react";
 import { Dumbbell, Gift, Hotel, Scissors, Shirt, Sparkles, Utensils } from "lucide-react";
 
 function PrizeFallbackIcon({ name }: { name: string }) {
   const normalized = name.toLowerCase();
-  const className = "mx-auto size-8";
+  const className = "mx-auto size-9 drop-shadow-sm";
 
   if (normalized.includes("estadia") || normalized.includes("complejo")) {
     return <Hotel aria-hidden="true" className={className} />;
@@ -50,30 +45,19 @@ function PrizeFallbackIcon({ name }: { name: string }) {
 type PrizeImageProps = {
   name: string;
   position: number;
-  src: string | null;
 };
 
-export function PrizeImage({ name, position, src }: PrizeImageProps) {
-  const [failed, setFailed] = useState(false);
-
-  if (!src || failed) {
-    return (
-      <div className="flex size-full items-center justify-center bg-gradient-to-br from-blue-700 via-blue-500 to-orange-400 text-white">
-        <div className="text-center">
-          <PrizeFallbackIcon name={name} />
-          <span className="mt-1 block text-xs font-bold">Premio {position}</span>
-        </div>
-      </div>
-    );
-  }
-
+export function PrizeImage({ name, position }: PrizeImageProps) {
   return (
-    <img
-      alt={name}
-      className="size-full object-contain"
-      loading="lazy"
-      onError={() => setFailed(true)}
-      src={src}
-    />
+    <div className="relative flex size-full items-center justify-center overflow-hidden bg-gradient-to-br from-blue-800 via-blue-600 to-orange-400 text-white">
+      <span className="absolute -right-5 -top-7 size-24 rounded-full border-[14px] border-white/15" />
+      <span className="absolute -bottom-7 -left-6 size-24 rounded-full border-[10px] border-orange-100/20" />
+      <div className="relative z-10 px-2 text-center">
+        <PrizeFallbackIcon name={name} />
+        <span className="mt-1 block text-xs font-black uppercase tracking-normal">
+          Premio {position}
+        </span>
+      </div>
+    </div>
   );
 }
