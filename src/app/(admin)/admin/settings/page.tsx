@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  clearBolivarSalesAction,
+  repairBolivarPrizeImagesAction,
+} from "@/features/maintenance/actions";
 import { updatePlatformSettingsAction } from "@/features/settings/actions";
 import { getSettingsForAdmin } from "@/features/settings/service";
 import { isDatabaseUnavailableError } from "@/lib/errors";
@@ -154,6 +158,28 @@ export default async function AdminSettingsPage() {
           <Button type="submit">Guardar ajustes</Button>
         </div>
       </form>
+
+      <section className="rounded-lg border border-orange-200 bg-orange-50 p-5 shadow-sm">
+        <Badge className="border-orange-300 bg-white text-orange-800" variant="outline">
+          Mantenimiento
+        </Badge>
+        <h3 className="mt-2 text-lg font-semibold">Rifa Bolivar</h3>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          Usa estas acciones solo cuando quieras preparar la rifa para venta real.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <form action={repairBolivarPrizeImagesAction}>
+            <Button type="submit" variant="outline">
+              Reparar imagenes de premios
+            </Button>
+          </form>
+          <form action={clearBolivarSalesAction}>
+            <Button type="submit" variant="destructive">
+              Dejar rifa en cero
+            </Button>
+          </form>
+        </div>
+      </section>
     </section>
   );
 }
