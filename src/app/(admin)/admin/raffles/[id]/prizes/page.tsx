@@ -110,7 +110,7 @@ export default async function AdminPrizesPage({ params }: AdminPrizesPageProps) 
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="new-image">Imagen</Label>
-            <Input id="new-image" name="imageUrl" type="url" />
+            <Input id="new-image" name="imageUrl" placeholder="/prizes/bolivar-01.svg" />
           </div>
           <div className="space-y-2 md:col-span-2">
             <Label htmlFor="new-description">Descripcion</Label>
@@ -181,7 +181,6 @@ export default async function AdminPrizesPage({ params }: AdminPrizesPageProps) 
                       disabled={Boolean(prize.deletedAt)}
                       id={`image-${prize.id}`}
                       name="imageUrl"
-                      type="url"
                     />
                   </div>
                   <div className="space-y-2 md:col-span-4">

@@ -9,14 +9,22 @@ const optionalString = z.preprocess((value) => {
   return trimmed.length > 0 ? trimmed : undefined;
 }, z.string().optional());
 
-const optionalUrl = z.preprocess((value) => {
-  if (typeof value !== "string") {
-    return value;
-  }
+const optionalUrl = z.preprocess(
+  (value) => {
+    if (typeof value !== "string") {
+      return value;
+    }
 
-  const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}, z.string().url().optional());
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  },
+  z
+    .string()
+    .refine((value) => value.startsWith("/") || z.string().url().safeParse(value).success, {
+      message: "Ingresa una URL completa o una ruta interna como /prizes/imagen.svg.",
+    })
+    .optional(),
+);
 
 const optionalMoney = z.preprocess((value) => {
   if (typeof value !== "string") {

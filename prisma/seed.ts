@@ -18,6 +18,7 @@ import {
 const databaseUrl = process.env.DATABASE_URL;
 const seedAdminEmail = process.env.SEED_ADMIN_EMAIL;
 const seedAdminPassword = process.env.SEED_ADMIN_PASSWORD;
+const seedSampleSales = process.env.SEED_SAMPLE_SALES === "true";
 
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is required.");
@@ -254,7 +255,8 @@ async function main() {
       allowMultipleWinsPerTicket: false,
       allowMultipleWinsPerParticipant: false,
       winnerRules: "Un ticket pagado participa una vez por sorteo.",
-      terms: "La reserva se confirma con comprobante valido o venta manual aprobada por administracion. El sorteo se realizara en la fecha publicada.",
+      terms:
+        "La reserva se confirma con comprobante valido o venta manual aprobada por administracion. El sorteo se realizara en la fecha publicada.",
       contactEmail: "frann.chute1@gmail.com",
       contactPhone: "+54 351 555 0000",
       contactWhatsapp: "+54 351 555 0000",
@@ -281,7 +283,8 @@ async function main() {
       allowMultipleWinsPerTicket: false,
       allowMultipleWinsPerParticipant: false,
       winnerRules: "Un ticket pagado participa una vez por sorteo.",
-      terms: "La reserva se confirma con comprobante valido o venta manual aprobada por administracion. El sorteo se realizara en la fecha publicada.",
+      terms:
+        "La reserva se confirma con comprobante valido o venta manual aprobada por administracion. El sorteo se realizara en la fecha publicada.",
       contactEmail: "frann.chute1@gmail.com",
       contactPhone: "+54 351 555 0000",
       contactWhatsapp: "+54 351 555 0000",
@@ -300,7 +303,8 @@ async function main() {
       alias: "frann.chute",
       cbu: null,
       cvu: "0000003100014211899935",
-      instructions: "Transferi el total, sube una foto del comprobante y te confirmaremos la compra.",
+      instructions:
+        "Transferi el total, sube una foto del comprobante y te confirmaremos la compra.",
     },
     create: {
       raffleId: raffle.id,
@@ -313,7 +317,8 @@ async function main() {
       alias: "frann.chute",
       cbu: null,
       cvu: "0000003100014211899935",
-      instructions: "Transferi el total, sube una foto del comprobante y te confirmaremos la compra.",
+      instructions:
+        "Transferi el total, sube una foto del comprobante y te confirmaremos la compra.",
     },
   });
 
@@ -345,7 +350,8 @@ async function main() {
       alias: "frann.chute",
       cbu: null,
       cvu: "0000003100014211899935",
-      instructions: "Paga por Mercado Pago, sube una foto del comprobante y te confirmaremos la compra.",
+      instructions:
+        "Paga por Mercado Pago, sube una foto del comprobante y te confirmaremos la compra.",
     },
     create: {
       raffleId: raffle.id,
@@ -357,7 +363,8 @@ async function main() {
       alias: "frann.chute",
       cbu: null,
       cvu: "0000003100014211899935",
-      instructions: "Paga por Mercado Pago, sube una foto del comprobante y te confirmaremos la compra.",
+      instructions:
+        "Paga por Mercado Pago, sube una foto del comprobante y te confirmaremos la compra.",
     },
   });
 
@@ -423,155 +430,227 @@ async function main() {
     });
   }
 
-  const participants = await Promise.all(
-    Array.from({ length: 12 }, async (_, index) => {
-      const number = index + 1;
-      const firstName = seedFirstNames[index] ?? `Participante ${number}`;
+  let seededParticipants = 0;
 
-      return prisma.participant.upsert({
-        where: { email: `participante${number}@rifas.local` },
+  if (seedSampleSales) {
+    const participants = await Promise.all(
+      Array.from({ length: 12 }, async (_, index) => {
+        const number = index + 1;
+        const firstName = seedFirstNames[index] ?? `Participante ${number}`;
+
+        return prisma.participant.upsert({
+          where: { email: `participante${number}@rifas.local` },
+          update: {
+            firstName,
+            lastName: `Demo ${number}`,
+            phone: `+541100000${number.toString().padStart(3, "0")}`,
+            whatsapp: `+541100000${number.toString().padStart(3, "0")}`,
+            dni: `99000${number.toString().padStart(3, "0")}`,
+            deletedAt: null,
+          },
+          create: {
+            firstName,
+            lastName: `Demo ${number}`,
+            email: `participante${number}@rifas.local`,
+            phone: `+541100000${number.toString().padStart(3, "0")}`,
+            whatsapp: `+541100000${number.toString().padStart(3, "0")}`,
+            dni: `99000${number.toString().padStart(3, "0")}`,
+          },
+        });
+      }),
+    );
+
+    const paidTicketNumbers = Array.from({ length: 8 }, (_, index) => index + 501);
+    const pendingTicketNumbers = Array.from({ length: 4 }, (_, index) => index + 521);
+    const reservedTicketNumbers = Array.from({ length: 3 }, (_, index) => index + 541);
+    const cancelledTicketNumbers = Array.from({ length: 2 }, (_, index) => index + 561);
+
+    await prisma.ticketHistory.deleteMany({
+      where: { raffleId: raffle.id },
+    });
+
+    await prisma.auditLog.deleteMany({
+      where: { raffleId: raffle.id },
+    });
+
+    async function upsertOrderWithTickets(input: {
+      publicCode: string;
+      participantIndex: number;
+      ticketNumbers: number[];
+      status:
+        typeof OrderStatus.PAID | typeof OrderStatus.PENDING_PAYMENT | typeof OrderStatus.RESERVED;
+      paymentStatus:
+        | typeof PaymentStatus.APPROVED
+        | typeof PaymentStatus.MANUAL_REVIEW
+        | typeof PaymentStatus.PENDING;
+      paymentMethod: typeof PaymentMethodType.CASH | typeof PaymentMethodType.BANK_TRANSFER;
+    }) {
+      const participant = participants[input.participantIndex % participants.length];
+      if (!participant) {
+        throw new Error("Seed participants were not created.");
+      }
+
+      const totalAmount = (input.ticketNumbers.length * Number(ticketPrice)).toFixed(2);
+      const expiresAt = new Date(now.getTime() + 10 * 60 * 1000);
+
+      const order = await prisma.order.upsert({
+        where: { publicCode: input.publicCode },
         update: {
-          firstName,
-          lastName: `Demo ${number}`,
-          phone: `+541100000${number.toString().padStart(3, "0")}`,
-          whatsapp: `+541100000${number.toString().padStart(3, "0")}`,
-          dni: `99000${number.toString().padStart(3, "0")}`,
-          deletedAt: null,
+          raffleId: raffle.id,
+          participantId: participant.id,
+          status: input.status,
+          currency,
+          totalAmount,
+          expiresAt: input.status === OrderStatus.PAID ? null : expiresAt,
+          paidAt: input.status === OrderStatus.PAID ? now : null,
+          cancelledAt: null,
         },
         create: {
-          firstName,
-          lastName: `Demo ${number}`,
-          email: `participante${number}@rifas.local`,
-          phone: `+541100000${number.toString().padStart(3, "0")}`,
-          whatsapp: `+541100000${number.toString().padStart(3, "0")}`,
-          dni: `99000${number.toString().padStart(3, "0")}`,
+          publicCode: input.publicCode,
+          raffleId: raffle.id,
+          participantId: participant.id,
+          status: input.status,
+          currency,
+          totalAmount,
+          expiresAt: input.status === OrderStatus.PAID ? null : expiresAt,
+          paidAt: input.status === OrderStatus.PAID ? now : null,
         },
       });
-    }),
-  );
 
-  const paidTicketNumbers = Array.from({ length: 8 }, (_, index) => index + 501);
-  const pendingTicketNumbers = Array.from({ length: 4 }, (_, index) => index + 521);
-  const reservedTicketNumbers = Array.from({ length: 3 }, (_, index) => index + 541);
-  const cancelledTicketNumbers = Array.from({ length: 2 }, (_, index) => index + 561);
+      const payment = await prisma.payment.upsert({
+        where: { externalReference: `seed-${input.publicCode}` },
+        update: {
+          raffleId: raffle.id,
+          orderId: order.id,
+          participantId: participant.id,
+          provider: PaymentProvider.MANUAL,
+          method: input.paymentMethod,
+          status: input.paymentStatus,
+          amount: totalAmount,
+          currency,
+          reviewedById: input.paymentStatus === PaymentStatus.APPROVED ? admin.id : null,
+          reviewedAt: input.paymentStatus === PaymentStatus.APPROVED ? now : null,
+          rejectionReason: null,
+        },
+        create: {
+          raffleId: raffle.id,
+          orderId: order.id,
+          participantId: participant.id,
+          provider: PaymentProvider.MANUAL,
+          method: input.paymentMethod,
+          status: input.paymentStatus,
+          amount: totalAmount,
+          currency,
+          externalReference: `seed-${input.publicCode}`,
+          reviewedById: input.paymentStatus === PaymentStatus.APPROVED ? admin.id : null,
+          reviewedAt: input.paymentStatus === PaymentStatus.APPROVED ? now : null,
+        },
+      });
 
-  await prisma.ticketHistory.deleteMany({
-    where: { raffleId: raffle.id },
-  });
+      await prisma.orderItem.deleteMany({
+        where: { orderId: order.id },
+      });
 
-  await prisma.auditLog.deleteMany({
-    where: { raffleId: raffle.id },
-  });
+      for (const number of input.ticketNumbers) {
+        const ticket = await prisma.ticket.findUniqueOrThrow({
+          where: { raffleId_number: { raffleId: raffle.id, number } },
+        });
 
-  async function upsertOrderWithTickets(input: {
-    publicCode: string;
-    participantIndex: number;
-    ticketNumbers: number[];
-    status:
-      typeof OrderStatus.PAID | typeof OrderStatus.PENDING_PAYMENT | typeof OrderStatus.RESERVED;
-    paymentStatus:
-      | typeof PaymentStatus.APPROVED
-      | typeof PaymentStatus.MANUAL_REVIEW
-      | typeof PaymentStatus.PENDING;
-    paymentMethod: typeof PaymentMethodType.CASH | typeof PaymentMethodType.BANK_TRANSFER;
-  }) {
-    const participant = participants[input.participantIndex % participants.length];
-    if (!participant) {
-      throw new Error("Seed participants were not created.");
+        await prisma.orderItem.create({
+          data: {
+            orderId: order.id,
+            ticketId: ticket.id,
+            number: ticket.number,
+            label: ticket.label,
+            unitPrice: ticketPrice,
+            currency,
+          },
+        });
+
+        const targetStatus =
+          input.status === OrderStatus.PAID
+            ? TicketStatus.PAID
+            : input.status === OrderStatus.PENDING_PAYMENT
+              ? TicketStatus.PAYMENT_PENDING
+              : TicketStatus.RESERVED;
+
+        await prisma.ticket.update({
+          where: { id: ticket.id },
+          data: {
+            status: targetStatus,
+            reservedUntil: input.status === OrderStatus.RESERVED ? expiresAt : null,
+            participantId: participant.id,
+            currentOrderId: order.id,
+            currentPaymentId: payment.id,
+          },
+        });
+
+        await prisma.ticketHistory.create({
+          data: {
+            ticketId: ticket.id,
+            raffleId: raffle.id,
+            fromStatus: TicketStatus.AVAILABLE,
+            toStatus: targetStatus,
+            event:
+              targetStatus === TicketStatus.PAID
+                ? TicketHistoryEvent.PAID
+                : targetStatus === TicketStatus.PAYMENT_PENDING
+                  ? TicketHistoryEvent.PAYMENT_PENDING
+                  : TicketHistoryEvent.RESERVED,
+            actorUserId: admin.id,
+            participantId: participant.id,
+            orderId: order.id,
+            paymentId: payment.id,
+            reason: "Seed de desarrollo",
+          },
+        });
+      }
     }
 
-    const totalAmount = (input.ticketNumbers.length * Number(ticketPrice)).toFixed(2);
-    const expiresAt = new Date(now.getTime() + 10 * 60 * 1000);
-
-    const order = await prisma.order.upsert({
-      where: { publicCode: input.publicCode },
-      update: {
-        raffleId: raffle.id,
-        participantId: participant.id,
-        status: input.status,
-        currency,
-        totalAmount,
-        expiresAt: input.status === OrderStatus.PAID ? null : expiresAt,
-        paidAt: input.status === OrderStatus.PAID ? now : null,
-        cancelledAt: null,
-      },
-      create: {
-        publicCode: input.publicCode,
-        raffleId: raffle.id,
-        participantId: participant.id,
-        status: input.status,
-        currency,
-        totalAmount,
-        expiresAt: input.status === OrderStatus.PAID ? null : expiresAt,
-        paidAt: input.status === OrderStatus.PAID ? now : null,
-      },
-    });
-
-    const payment = await prisma.payment.upsert({
-      where: { externalReference: `seed-${input.publicCode}` },
-      update: {
-        raffleId: raffle.id,
-        orderId: order.id,
-        participantId: participant.id,
-        provider: PaymentProvider.MANUAL,
-        method: input.paymentMethod,
-        status: input.paymentStatus,
-        amount: totalAmount,
-        currency,
-        reviewedById: input.paymentStatus === PaymentStatus.APPROVED ? admin.id : null,
-        reviewedAt: input.paymentStatus === PaymentStatus.APPROVED ? now : null,
-        rejectionReason: null,
-      },
-      create: {
-        raffleId: raffle.id,
-        orderId: order.id,
-        participantId: participant.id,
-        provider: PaymentProvider.MANUAL,
-        method: input.paymentMethod,
-        status: input.paymentStatus,
-        amount: totalAmount,
-        currency,
-        externalReference: `seed-${input.publicCode}`,
-        reviewedById: input.paymentStatus === PaymentStatus.APPROVED ? admin.id : null,
-        reviewedAt: input.paymentStatus === PaymentStatus.APPROVED ? now : null,
-      },
-    });
-
-    await prisma.orderItem.deleteMany({
-      where: { orderId: order.id },
-    });
-
-    for (const number of input.ticketNumbers) {
-      const ticket = await prisma.ticket.findUniqueOrThrow({
-        where: { raffleId_number: { raffleId: raffle.id, number } },
+    for (let index = 0; index < paidTicketNumbers.length; index += 8) {
+      await upsertOrderWithTickets({
+        publicCode: createPublicCode("SEED-PAID", index / 8 + 1),
+        participantIndex: index / 8,
+        ticketNumbers: paidTicketNumbers.slice(index, index + 8),
+        status: OrderStatus.PAID,
+        paymentStatus: PaymentStatus.APPROVED,
+        paymentMethod: index % 16 === 0 ? PaymentMethodType.CASH : PaymentMethodType.BANK_TRANSFER,
       });
+    }
 
-      await prisma.orderItem.create({
-        data: {
-          orderId: order.id,
-          ticketId: ticket.id,
-          number: ticket.number,
-          label: ticket.label,
-          unitPrice: ticketPrice,
-          currency,
-        },
+    for (let index = 0; index < pendingTicketNumbers.length; index += 4) {
+      await upsertOrderWithTickets({
+        publicCode: createPublicCode("SEED-PENDING", index / 4 + 1),
+        participantIndex: index / 4,
+        ticketNumbers: pendingTicketNumbers.slice(index, index + 4),
+        status: OrderStatus.PENDING_PAYMENT,
+        paymentStatus: PaymentStatus.MANUAL_REVIEW,
+        paymentMethod: PaymentMethodType.BANK_TRANSFER,
       });
+    }
 
-      const targetStatus =
-        input.status === OrderStatus.PAID
-          ? TicketStatus.PAID
-          : input.status === OrderStatus.PENDING_PAYMENT
-            ? TicketStatus.PAYMENT_PENDING
-            : TicketStatus.RESERVED;
+    for (let index = 0; index < reservedTicketNumbers.length; index += 3) {
+      await upsertOrderWithTickets({
+        publicCode: createPublicCode("SEED-RESERVED", index / 3 + 1),
+        participantIndex: index / 3,
+        ticketNumbers: reservedTicketNumbers.slice(index, index + 3),
+        status: OrderStatus.RESERVED,
+        paymentStatus: PaymentStatus.PENDING,
+        paymentMethod: PaymentMethodType.BANK_TRANSFER,
+      });
+    }
 
+    const cancelledTickets = await prisma.ticket.findMany({
+      where: { raffleId: raffle.id, number: { in: cancelledTicketNumbers } },
+      orderBy: { number: "asc" },
+    });
+
+    for (const ticket of cancelledTickets) {
       await prisma.ticket.update({
         where: { id: ticket.id },
         data: {
-          status: targetStatus,
-          reservedUntil: input.status === OrderStatus.RESERVED ? expiresAt : null,
-          participantId: participant.id,
-          currentOrderId: order.id,
-          currentPaymentId: payment.id,
+          status: TicketStatus.CANCELLED,
+          cancellationReason: "Seed: anulacion administrativa de prueba",
         },
       });
 
@@ -580,81 +659,15 @@ async function main() {
           ticketId: ticket.id,
           raffleId: raffle.id,
           fromStatus: TicketStatus.AVAILABLE,
-          toStatus: targetStatus,
-          event:
-            targetStatus === TicketStatus.PAID
-              ? TicketHistoryEvent.PAID
-              : targetStatus === TicketStatus.PAYMENT_PENDING
-                ? TicketHistoryEvent.PAYMENT_PENDING
-                : TicketHistoryEvent.RESERVED,
+          toStatus: TicketStatus.CANCELLED,
+          event: TicketHistoryEvent.CANCELLED,
           actorUserId: admin.id,
-          participantId: participant.id,
-          orderId: order.id,
-          paymentId: payment.id,
-          reason: "Seed de desarrollo",
+          reason: "Seed: anulacion administrativa de prueba",
         },
       });
     }
-  }
 
-  for (let index = 0; index < paidTicketNumbers.length; index += 8) {
-    await upsertOrderWithTickets({
-      publicCode: createPublicCode("SEED-PAID", index / 8 + 1),
-      participantIndex: index / 8,
-      ticketNumbers: paidTicketNumbers.slice(index, index + 8),
-      status: OrderStatus.PAID,
-      paymentStatus: PaymentStatus.APPROVED,
-      paymentMethod: index % 16 === 0 ? PaymentMethodType.CASH : PaymentMethodType.BANK_TRANSFER,
-    });
-  }
-
-  for (let index = 0; index < pendingTicketNumbers.length; index += 4) {
-    await upsertOrderWithTickets({
-      publicCode: createPublicCode("SEED-PENDING", index / 4 + 1),
-      participantIndex: index / 4,
-      ticketNumbers: pendingTicketNumbers.slice(index, index + 4),
-      status: OrderStatus.PENDING_PAYMENT,
-      paymentStatus: PaymentStatus.MANUAL_REVIEW,
-      paymentMethod: PaymentMethodType.BANK_TRANSFER,
-    });
-  }
-
-  for (let index = 0; index < reservedTicketNumbers.length; index += 3) {
-    await upsertOrderWithTickets({
-      publicCode: createPublicCode("SEED-RESERVED", index / 3 + 1),
-      participantIndex: index / 3,
-      ticketNumbers: reservedTicketNumbers.slice(index, index + 3),
-      status: OrderStatus.RESERVED,
-      paymentStatus: PaymentStatus.PENDING,
-      paymentMethod: PaymentMethodType.BANK_TRANSFER,
-    });
-  }
-
-  const cancelledTickets = await prisma.ticket.findMany({
-    where: { raffleId: raffle.id, number: { in: cancelledTicketNumbers } },
-    orderBy: { number: "asc" },
-  });
-
-  for (const ticket of cancelledTickets) {
-    await prisma.ticket.update({
-      where: { id: ticket.id },
-      data: {
-        status: TicketStatus.CANCELLED,
-        cancellationReason: "Seed: anulacion administrativa de prueba",
-      },
-    });
-
-    await prisma.ticketHistory.create({
-      data: {
-        ticketId: ticket.id,
-        raffleId: raffle.id,
-        fromStatus: TicketStatus.AVAILABLE,
-        toStatus: TicketStatus.CANCELLED,
-        event: TicketHistoryEvent.CANCELLED,
-        actorUserId: admin.id,
-        reason: "Seed: anulacion administrativa de prueba",
-      },
-    });
+    seededParticipants = participants.length;
   }
 
   const stats = await prisma.ticket.groupBy({
@@ -684,7 +697,7 @@ async function main() {
         raffle: raffle.slug,
         tickets: 100,
         prizes: bolivarPrizes.length,
-        participants: participants.length,
+        participants: seededParticipants,
         stats: Object.fromEntries(stats.map((row) => [row.status, row._count._all])),
       },
       null,

@@ -39,9 +39,12 @@ export async function submitPaymentReceiptWithStateAction(
 
 export async function submitCashPaymentWithStateAction(
   orderId: string,
-  _previousState: PaymentReceiptActionState,
-  _formData: FormData,
+  previousState: PaymentReceiptActionState,
+  formData: FormData,
 ): Promise<PaymentReceiptActionState> {
+  void previousState;
+  void formData;
+
   try {
     await submitCashPayment(orderId);
   } catch (error) {

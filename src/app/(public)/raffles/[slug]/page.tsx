@@ -1,4 +1,4 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarDays, CreditCard, Gift, Ticket } from "lucide-react";
@@ -137,15 +137,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
           </div>
           {raffle.imageUrl ? (
             <div className="club-card relative aspect-[16/9] overflow-hidden rounded-lg border bg-muted">
-              <Image
-                alt=""
-                className="object-cover"
-                fill
-                priority
-                unoptimized
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                src={raffle.imageUrl}
-              />
+              <img alt="" className="size-full object-cover" src={raffle.imageUrl} />
             </div>
           ) : null}
         </div>
@@ -169,14 +161,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                 >
                   {prize.imageUrl ? (
                     <div className="relative h-20 overflow-hidden bg-blue-50 sm:h-24">
-                      <Image
-                        alt=""
-                        className="object-contain"
-                        fill
-                        unoptimized
-                        sizes="(min-width: 1280px) 20vw, (min-width: 640px) 50vw, 100vw"
-                        src={prize.imageUrl}
-                      />
+                      <img alt="" className="size-full object-contain" src={prize.imageUrl} />
                     </div>
                   ) : null}
                   <div className="flex items-start gap-2 p-2.5">

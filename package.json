@@ -23,6 +23,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "db:seed": "npm run assets:prizes && tsx prisma/seed.ts",
+    "db:clear-sales": "node scripts/clear-raffle-sales.mjs",
     "db:up": "docker compose up -d db",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f db",
