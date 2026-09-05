@@ -168,10 +168,10 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                   className="overflow-hidden rounded-md border border-blue-100 bg-white transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   {prize.imageUrl ? (
-                    <div className="relative h-20 overflow-hidden bg-muted sm:h-24">
+                    <div className="relative h-20 overflow-hidden bg-blue-50 sm:h-24">
                       <Image
                         alt=""
-                        className="object-cover"
+                        className="object-contain"
                         fill
                         unoptimized
                         sizes="(min-width: 1280px) 20vw, (min-width: 640px) 50vw, 100vw"

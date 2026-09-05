@@ -136,8 +136,8 @@ const prizes = [
   },
   {
     position: 21,
-    name: "Premio 21 a confirmar",
-    description: "Premio cargado en posicion 21, pendiente de ajustar cuando se vea el texto completo.",
+    name: "Premio 21",
+    description: "Premio adicional de la lista oficial de la rifa.",
     imageUrl: prizeImage(21),
   },
   {
@@ -173,11 +173,39 @@ try {
     `UPDATE "Raffle"
      SET "imageUrl" = $1,
          status = 'OPEN',
+         "startNumber" = 501,
+         "endNumber" = 600,
+         "numberPadding" = GREATEST("numberPadding", 4),
+         price = 3000.00,
          "startsAt" = COALESCE("startsAt", $2),
          "closesAt" = COALESCE("closesAt", $3),
          "updatedAt" = $2
      WHERE id = $4`,
     ["/brand/bolivar-u17-rifa.png", now, closesAt, raffle.id],
+  );
+
+  const ticketValues = Array.from({ length: 100 }, (_, index) => {
+    const number = index + 501;
+    const label = number.toString().padStart(4, "0");
+
+    return `('${crypto.randomUUID()}', '${raffle.id}', ${number}, '${label}', 'AVAILABLE', '${now.toISOString()}', '${now.toISOString()}')`;
+  }).join(",\n");
+
+  await client.query(
+    `INSERT INTO "Ticket" (id, "raffleId", number, label, status, "createdAt", "updatedAt")
+     VALUES ${ticketValues}
+     ON CONFLICT ("raffleId", number) DO UPDATE SET
+       label = EXCLUDED.label,
+       "updatedAt" = EXCLUDED."updatedAt"`,
+  );
+
+  await client.query(
+    `DELETE FROM "Ticket"
+     WHERE "raffleId" = $1
+       AND (number < 501 OR number > 600)
+       AND "currentOrderId" IS NULL
+       AND "currentPaymentId" IS NULL`,
+    [raffle.id],
   );
 
   const paymentMethods = [
@@ -301,6 +329,16 @@ try {
   }
 
   await client.query(
+    `UPDATE "Prize"
+     SET active = false,
+         "deletedAt" = $1,
+         "updatedAt" = $1
+     WHERE "raffleId" = $2
+       AND position > $3`,
+    [now, raffle.id, prizes.length],
+  );
+
+  await client.query(
     `INSERT INTO "AuditLog" (
       id, "raffleId", action, "entityType", "entityId", metadata, "createdAt"
     ) VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7)`,
@@ -323,6 +361,7 @@ try {
         raffle: raffle.name,
         slug: raffleSlug,
         prizes: prizes.length,
+        tickets: 100,
         imageUrl: "/brand/bolivar-u17-rifa.png",
         status: "OPEN",
         paymentMethods: paymentMethods.map((method) => method.type),

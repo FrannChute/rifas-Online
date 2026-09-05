@@ -34,8 +34,8 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: databaseUrl }),
 });
 
-const raffleSlug = "rifa-desarrollo-1500";
-const ticketPrice = "2500.00";
+const raffleSlug = "gran-rifa-solidaria-u17-de-bolivar";
+const ticketPrice = "3000.00";
 const currency = "ARS";
 const seedFirstNames = [
   "Lucia",
@@ -52,8 +52,125 @@ const seedFirstNames = [
   "Agustin",
 ] as const;
 
+const bolivarPrizes = [
+  {
+    position: 1,
+    name: "1 noche de estadia en Complejo San Pio",
+    description: "Escapada de descanso en Icho Cruz, ideal para disfrutar en temporada baja.",
+  },
+  {
+    position: 2,
+    name: "Pase por 1 mes en Cinesis Medicl Gym",
+    description: "Un mes de entrenamiento para moverse, sumar energia y mantenerse activo.",
+  },
+  {
+    position: 3,
+    name: "2 cortes masculinos en Sotelo Barber Shop + 2 cajas de alfajores",
+    description: "Dos cortes de barberia y dos cajas dulces para compartir despues.",
+  },
+  {
+    position: 4,
+    name: "1 corte masculino en Sotelo Barber Shop + 1 caja de alfajores",
+    description: "Un combo de barberia con una caja de alfajores para darse un gusto.",
+  },
+  {
+    position: 5,
+    name: "1 corte masculino en Sotelo Barber Shop + 1 caja de alfajores",
+    description: "Corte masculino y alfajores, una combinacion simple y rendidora.",
+  },
+  {
+    position: 6,
+    name: "Mantel de mesa de tusor + agarraderas de horno",
+    description: "Set practico para vestir la mesa y sumar utilidad en la cocina.",
+  },
+  {
+    position: 7,
+    name: "1 botella de Casalta + 1 champagne",
+    description: "Bebidas para brindar y acompanar una celebracion especial.",
+  },
+  {
+    position: 8,
+    name: "1 botella de Casalta + 1 champagne",
+    description: "Otro premio de brindis para compartir en familia o con amigos.",
+  },
+  {
+    position: 9,
+    name: "1 turno de 1 1/2 h de padel en Olibert + 1 caja de alfajores",
+    description: "Un turno de padel para jugar y una caja dulce para el cierre.",
+  },
+  {
+    position: 10,
+    name: "1 turno de 1 1/2 h de padel en Olibert + 1 caja de alfajores",
+    description: "Padel con amigos y alfajores como premio extra.",
+  },
+  {
+    position: 11,
+    name: "1 turno de 1 1/2 h de padel en Olibert + 1 caja de alfajores",
+    description: "Un nuevo turno de padel para seguir sumando juego.",
+  },
+  {
+    position: 12,
+    name: "Rodillera de basquet Nike",
+    description: "Proteccion deportiva para entrenar y jugar al basquet con mas seguridad.",
+  },
+  {
+    position: 13,
+    name: "Merienda para 2 personas en Aqui Bar La Terminal",
+    description: "Merienda para dos, pensada para compartir una salida tranquila.",
+  },
+  {
+    position: 14,
+    name: "Voucher de descuento Urquiza VCP",
+    description: "Beneficio de descuento para usar en una compra local.",
+  },
+  {
+    position: 15,
+    name: "Productos de limpieza Distribuidora CRISBET",
+    description: "Combo de limpieza con Skip, Vivere y producto para ceramica o piso.",
+  },
+  {
+    position: 16,
+    name: "Hornitos + esencia aromatizante",
+    description: "Detalle aromatico para perfumar espacios y sumar calidez al hogar.",
+  },
+  {
+    position: 17,
+    name: "MANTEL KOA.DECOHOME",
+    description: "Mantel decorativo para renovar la mesa con un toque prolijo.",
+  },
+  {
+    position: 18,
+    name: "1 bolsa de papa + 2 maples de huevos + 1 aceite de oliva",
+    description: "Canasta basica con papas, huevos y aceite de oliva.",
+  },
+  {
+    position: 19,
+    name: "1 bolsa de papa + 2 maples de huevos + 1 aceite de oliva",
+    description: "Otro combo de alimentos utiles para la cocina diaria.",
+  },
+  {
+    position: 20,
+    name: "Kit crema antiage Farmacia Sassarolli",
+    description: "Kit de cuidado personal orientado a rutina facial antiage.",
+  },
+  {
+    position: 21,
+    name: "Premio 21",
+    description: "Premio adicional de la lista oficial de la rifa.",
+  },
+  {
+    position: 22,
+    name: "Caja de golosinas y chocolates",
+    description: "Caja dulce con golosinas y chocolates para disfrutar o compartir.",
+  },
+] as const;
+
 function formatTicketLabel(number: number, padding: number) {
   return number.toString().padStart(padding, "0");
+}
+
+function prizeImage(position: number) {
+  return `/prizes/bolivar-${position.toString().padStart(2, "0")}.svg`;
 }
 
 function hashSeedPassword(password: string) {
@@ -86,48 +203,47 @@ async function main() {
   await prisma.platformSettings.upsert({
     where: { id: "default" },
     update: {
-      platformName: "Rifas Online",
-      supportEmail: "soporte@rifas.local",
-      supportWhatsapp: "+5491123456789",
-      bankAlias: "RIFAS.ONLINE",
-      bankCbu: "0000003100010000000001",
-      bankCvu: "0000007900000000000001",
-      bankAccountHolder: "Rifas Online SRL",
-      bankName: "Banco de Desarrollo",
+      platformName: "Club Sportivo Bolivar",
+      supportEmail: "frann.chute1@gmail.com",
+      supportWhatsapp: "+543515550000",
+      bankAlias: "frann.chute",
+      bankCbu: null,
+      bankCvu: "0000003100014211899935",
+      bankAccountHolder: "FRANCISCO NIETO GONZALEZ",
+      bankName: null,
       defaultReservationDurationMinutes: 10,
     },
     create: {
       id: "default",
-      platformName: "Rifas Online",
-      supportEmail: "soporte@rifas.local",
-      supportWhatsapp: "+5491123456789",
-      bankAlias: "RIFAS.ONLINE",
-      bankCbu: "0000003100010000000001",
-      bankCvu: "0000007900000000000001",
-      bankAccountHolder: "Rifas Online SRL",
-      bankName: "Banco de Desarrollo",
+      platformName: "Club Sportivo Bolivar",
+      supportEmail: "frann.chute1@gmail.com",
+      supportWhatsapp: "+543515550000",
+      bankAlias: "frann.chute",
+      bankCbu: null,
+      bankCvu: "0000003100014211899935",
+      bankAccountHolder: "FRANCISCO NIETO GONZALEZ",
+      bankName: null,
       defaultReservationDurationMinutes: 10,
     },
   });
 
   const now = new Date();
-  const startsAt = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const closesAt = new Date(now.getTime() + 21 * 24 * 60 * 60 * 1000);
-  const drawScheduledAt = new Date(now.getTime() + 24 * 24 * 60 * 60 * 1000);
+  const startsAt = new Date("2026-09-02T15:06:00-03:00");
+  const closesAt = new Date("2026-09-14T23:59:00-03:00");
+  const drawScheduledAt = new Date("2026-09-14T23:35:00-03:00");
 
   const raffle = await prisma.raffle.upsert({
     where: { slug: raffleSlug },
     update: {
-      name: "Gran Rifa Desarrollo 1500",
+      name: "CLUB SPORTIVO BOLIVAR",
       description:
-        "Rifa de desarrollo con 1500 numeros reales, premios variados y ventas de prueba.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1400&q=80",
+        "Rifa solidaria para acompanar a Bolivar U17 en la semifinal argentina de formativas. Cada numero ayuda al equipo y participa por premios de comercios y colaboradores.",
+      imageUrl: "/brand/bolivar-u17-rifa.png",
       status: RaffleStatus.OPEN,
       price: ticketPrice,
       currency,
-      startNumber: 1,
-      endNumber: 1500,
+      startNumber: 501,
+      endNumber: 600,
       numberPadding: 4,
       startsAt,
       closesAt,
@@ -138,24 +254,23 @@ async function main() {
       allowMultipleWinsPerTicket: false,
       allowMultipleWinsPerParticipant: false,
       winnerRules: "Un ticket pagado participa una vez por sorteo.",
-      terms: "Seed de desarrollo. No representa una venta real.",
-      contactEmail: "ventas@rifas.local",
-      contactPhone: "+54 9 11 2345 6789",
-      contactWhatsapp: "+54 9 11 2345 6789",
+      terms: "La reserva se confirma con comprobante valido o venta manual aprobada por administracion. El sorteo se realizara en la fecha publicada.",
+      contactEmail: "frann.chute1@gmail.com",
+      contactPhone: "+54 351 555 0000",
+      contactWhatsapp: "+54 351 555 0000",
       createdById: admin.id,
     },
     create: {
       slug: raffleSlug,
-      name: "Gran Rifa Desarrollo 1500",
+      name: "CLUB SPORTIVO BOLIVAR",
       description:
-        "Rifa de desarrollo con 1500 numeros reales, premios variados y ventas de prueba.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1400&q=80",
+        "Rifa solidaria para acompanar a Bolivar U17 en la semifinal argentina de formativas. Cada numero ayuda al equipo y participa por premios de comercios y colaboradores.",
+      imageUrl: "/brand/bolivar-u17-rifa.png",
       status: RaffleStatus.OPEN,
       price: ticketPrice,
       currency,
-      startNumber: 1,
-      endNumber: 1500,
+      startNumber: 501,
+      endNumber: 600,
       numberPadding: 4,
       startsAt,
       closesAt,
@@ -166,10 +281,10 @@ async function main() {
       allowMultipleWinsPerTicket: false,
       allowMultipleWinsPerParticipant: false,
       winnerRules: "Un ticket pagado participa una vez por sorteo.",
-      terms: "Seed de desarrollo. No representa una venta real.",
-      contactEmail: "ventas@rifas.local",
-      contactPhone: "+54 9 11 2345 6789",
-      contactWhatsapp: "+54 9 11 2345 6789",
+      terms: "La reserva se confirma con comprobante valido o venta manual aprobada por administracion. El sorteo se realizara en la fecha publicada.",
+      contactEmail: "frann.chute1@gmail.com",
+      contactPhone: "+54 351 555 0000",
+      contactWhatsapp: "+54 351 555 0000",
       createdById: admin.id,
     },
   });
@@ -180,12 +295,12 @@ async function main() {
       displayName: "Transferencia bancaria",
       active: true,
       sortOrder: 1,
-      bankName: "Banco de Desarrollo",
-      accountHolder: "Rifas Online SRL",
-      alias: "RIFAS.ONLINE",
-      cbu: "0000003100010000000001",
-      cvu: "0000007900000000000001",
-      instructions: "Enviar el comprobante desde el checkout para revision manual.",
+      bankName: null,
+      accountHolder: "FRANCISCO NIETO GONZALEZ",
+      alias: "frann.chute",
+      cbu: null,
+      cvu: "0000003100014211899935",
+      instructions: "Transferi el total, sube una foto del comprobante y te confirmaremos la compra.",
     },
     create: {
       raffleId: raffle.id,
@@ -193,12 +308,12 @@ async function main() {
       displayName: "Transferencia bancaria",
       active: true,
       sortOrder: 1,
-      bankName: "Banco de Desarrollo",
-      accountHolder: "Rifas Online SRL",
-      alias: "RIFAS.ONLINE",
-      cbu: "0000003100010000000001",
-      cvu: "0000007900000000000001",
-      instructions: "Enviar el comprobante desde el checkout para revision manual.",
+      bankName: null,
+      accountHolder: "FRANCISCO NIETO GONZALEZ",
+      alias: "frann.chute",
+      cbu: null,
+      cvu: "0000003100014211899935",
+      instructions: "Transferi el total, sube una foto del comprobante y te confirmaremos la compra.",
     },
   });
 
@@ -207,7 +322,7 @@ async function main() {
     update: {
       displayName: "Efectivo",
       active: true,
-      sortOrder: 2,
+      sortOrder: 3,
       instructions: "Venta manual registrada por administracion.",
     },
     create: {
@@ -215,7 +330,7 @@ async function main() {
       type: PaymentMethodType.CASH,
       displayName: "Efectivo",
       active: true,
-      sortOrder: 2,
+      sortOrder: 3,
       instructions: "Venta manual registrada por administracion.",
     },
   });
@@ -224,22 +339,30 @@ async function main() {
     where: { raffleId_type: { raffleId: raffle.id, type: PaymentMethodType.MERCADO_PAGO } },
     update: {
       displayName: "Mercado Pago",
-      active: false,
-      sortOrder: 3,
-      instructions: "Pendiente de credenciales reales de Mercado Pago.",
+      active: true,
+      sortOrder: 2,
+      accountHolder: "FRANCISCO NIETO GONZALEZ",
+      alias: "frann.chute",
+      cbu: null,
+      cvu: "0000003100014211899935",
+      instructions: "Paga por Mercado Pago, sube una foto del comprobante y te confirmaremos la compra.",
     },
     create: {
       raffleId: raffle.id,
       type: PaymentMethodType.MERCADO_PAGO,
       displayName: "Mercado Pago",
-      active: false,
-      sortOrder: 3,
-      instructions: "Pendiente de credenciales reales de Mercado Pago.",
+      active: true,
+      sortOrder: 2,
+      accountHolder: "FRANCISCO NIETO GONZALEZ",
+      alias: "frann.chute",
+      cbu: null,
+      cvu: "0000003100014211899935",
+      instructions: "Paga por Mercado Pago, sube una foto del comprobante y te confirmaremos la compra.",
     },
   });
 
-  const ticketData = Array.from({ length: 1500 }, (_, index) => {
-    const number = index + 1;
+  const ticketData = Array.from({ length: 100 }, (_, index) => {
+    const number = index + 501;
 
     return {
       raffleId: raffle.id,
@@ -267,33 +390,34 @@ async function main() {
   });
 
   await prisma.prize.updateMany({
-    where: { raffleId: raffle.id },
+    where: {
+      raffleId: raffle.id,
+      position: { gt: bolivarPrizes.length },
+    },
     data: {
-      deletedAt: null,
-      active: true,
+      deletedAt: now,
+      active: false,
     },
   });
 
-  for (let position = 1; position <= 30; position += 1) {
+  for (const prize of bolivarPrizes) {
     await prisma.prize.upsert({
-      where: { raffleId_position: { raffleId: raffle.id, position } },
+      where: { raffleId_position: { raffleId: raffle.id, position: prize.position } },
       update: {
-        name: `Premio ${position}`,
-        description: `Premio de desarrollo numero ${position}.`,
-        imageUrl:
-          "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80",
-        monetaryValue: (60_000 - position * 1_000).toFixed(2),
+        name: prize.name,
+        description: prize.description,
+        imageUrl: prizeImage(prize.position),
+        monetaryValue: null,
         active: true,
         deletedAt: null,
       },
       create: {
         raffleId: raffle.id,
-        name: `Premio ${position}`,
-        description: `Premio de desarrollo numero ${position}.`,
-        imageUrl:
-          "https://images.unsplash.com/photo-1607083206968-13611e3d76db?auto=format&fit=crop&w=900&q=80",
-        monetaryValue: (60_000 - position * 1_000).toFixed(2),
-        position,
+        name: prize.name,
+        description: prize.description,
+        imageUrl: prizeImage(prize.position),
+        monetaryValue: null,
+        position: prize.position,
         active: true,
       },
     });
@@ -310,7 +434,7 @@ async function main() {
           firstName,
           lastName: `Demo ${number}`,
           phone: `+541100000${number.toString().padStart(3, "0")}`,
-          whatsapp: `+5491100000${number.toString().padStart(3, "0")}`,
+          whatsapp: `+541100000${number.toString().padStart(3, "0")}`,
           dni: `99000${number.toString().padStart(3, "0")}`,
           deletedAt: null,
         },
@@ -319,17 +443,17 @@ async function main() {
           lastName: `Demo ${number}`,
           email: `participante${number}@rifas.local`,
           phone: `+541100000${number.toString().padStart(3, "0")}`,
-          whatsapp: `+5491100000${number.toString().padStart(3, "0")}`,
+          whatsapp: `+541100000${number.toString().padStart(3, "0")}`,
           dni: `99000${number.toString().padStart(3, "0")}`,
         },
       });
     }),
   );
 
-  const paidTicketNumbers = Array.from({ length: 96 }, (_, index) => index + 1);
-  const pendingTicketNumbers = Array.from({ length: 24 }, (_, index) => index + 201);
-  const reservedTicketNumbers = Array.from({ length: 18 }, (_, index) => index + 401);
-  const cancelledTicketNumbers = Array.from({ length: 6 }, (_, index) => index + 601);
+  const paidTicketNumbers = Array.from({ length: 8 }, (_, index) => index + 501);
+  const pendingTicketNumbers = Array.from({ length: 4 }, (_, index) => index + 521);
+  const reservedTicketNumbers = Array.from({ length: 3 }, (_, index) => index + 541);
+  const cancelledTicketNumbers = Array.from({ length: 2 }, (_, index) => index + 561);
 
   await prisma.ticketHistory.deleteMany({
     where: { raffleId: raffle.id },
@@ -558,8 +682,8 @@ async function main() {
       {
         admin: admin.email,
         raffle: raffle.slug,
-        tickets: 1500,
-        prizes: 30,
+        tickets: 100,
+        prizes: bolivarPrizes.length,
         participants: participants.length,
         stats: Object.fromEntries(stats.map((row) => [row.status, row._count._all])),
       },

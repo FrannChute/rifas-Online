@@ -1,21 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" role="img" aria-label="Premio 13 Merienda">
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-label="Premio 13 Merienda">
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#9333ea"/>
+      <stop offset="0" stop-color="#be123c"/>
       <stop offset="1" stop-color="#061735"/>
     </linearGradient>
-    <pattern id="court" width="64" height="64" patternUnits="userSpaceOnUse">
-      <path d="M0 32h64M32 0v64" stroke="rgba(255,255,255,.1)" stroke-width="2"/>
+    <pattern id="court" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M0 36h72M36 0v72" stroke="rgba(255,255,255,.08)" stroke-width="2"/>
     </pattern>
   </defs>
-  <rect width="720" height="480" rx="32" fill="url(#bg)"/>
-  <rect width="720" height="480" fill="url(#court)"/>
-  <circle cx="580" cy="100" r="112" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="16"/>
-  <circle cx="116" cy="118" r="58" fill="#f97316" stroke="#fff" stroke-width="8"/>
-  <path d="M66 118h100M116 60c22 38 22 78 0 116M84 76c18 28 18 56 0 84M148 76c-18 28-18 56 0 84" stroke="#7c2d12" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <rect x="54" y="278" width="612" height="118" rx="24" fill="rgba(255,255,255,.94)"/>
-  <text x="84" y="334" fill="#0b1736" font-family="Arial, sans-serif" font-size="28" font-weight="800">Premio 13</text>
-  <text x="84" y="372" fill="#0b3fa8" font-family="Arial, sans-serif" font-size="38" font-weight="900">Merienda</text>
-  <text x="84" y="420" fill="#334155" font-family="Arial, sans-serif" font-size="20" font-weight="700">Rifa Bolivar U17</text>
-  <text x="574" y="355" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="96" font-weight="900">#13</text>
+  <rect width="960" height="640" rx="36" fill="url(#bg)"/>
+  <rect width="960" height="640" fill="url(#court)"/>
+  <circle cx="800" cy="128" r="150" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="20"/>
+  
+    <circle cx="95" cy="86" r="34" fill="#f97316" stroke="#fff7ed" stroke-width="5"/>
+    <path d="M61 86h68M95 52c14 22 14 46 0 68M76 61c12 17 12 34 0 51M114 61c-12 17-12 34 0 51"
+      fill="none" stroke="#7c2d12" stroke-width="4" stroke-linecap="round"/>
+  
+  <g transform="translate(182 44) scale(1.35)">
+    
+    <path d="M184 244h184l-18 80H202z" fill="#fff"/>
+    <path d="M208 244c0-44 32-78 70-78s70 34 70 78" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round"/>
+    <circle cx="232" cy="290" r="10" fill="#f97316"/>
+    <circle cx="278" cy="292" r="10" fill="#f97316"/>
+    <circle cx="322" cy="290" r="10" fill="#f97316"/>
+  
+  </g>
+  <rect x="64" y="462" width="832" height="116" rx="28" fill="rgba(255,255,255,.96)"/>
+  <text x="96" y="510" fill="#0b1736" font-family="Arial, sans-serif" font-size="28" font-weight="900">Premio 13</text>
+  <text x="96" y="552" fill="#0b3fa8" font-family="Arial, sans-serif" font-size="42" font-weight="900">Merienda</text>
+  <text x="820" y="552" text-anchor="middle" fill="#be123c" font-family="Arial, sans-serif" font-size="72" font-weight="900">#13</text>
 </svg>
