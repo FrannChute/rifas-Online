@@ -37,6 +37,7 @@ next-env.d.ts
 /.pnpm-cache
 /.pnpm-state
 /.pnpm-store
+/.tools
 
 # temporary bootstrap folders
 /tmp-next-bootstrap
