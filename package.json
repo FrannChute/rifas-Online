@@ -7,7 +7,7 @@
     "dev": "next dev",
     "prebuild": "prisma generate",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/render-prepare.mjs && next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "format": "prettier --check .",
