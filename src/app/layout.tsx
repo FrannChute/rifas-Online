@@ -4,10 +4,10 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Rifas Online",
-    template: "%s | Rifas Online",
+    default: "Club Sportivo Bolivar",
+    template: "%s | Club Sportivo Bolivar",
   },
-  description: "Plataforma profesional de rifas online.",
+  description: "Rifas online del Club Sportivo Bolivar.",
 };
 
 export default function RootLayout({
