@@ -23,7 +23,7 @@ const prizes = [
   { position: 18, title: "Alimentos", kind: "food", color: "#ca8a04" },
   { position: 19, title: "Alimentos", kind: "food", color: "#65a30d" },
   { position: 20, title: "Crema", kind: "cream", color: "#db2777" },
-  { position: 21, title: "Premio 21", kind: "gift", color: "#475569" },
+  { position: 21, title: "Aceite y alfajores", kind: "food", color: "#475569" },
   { position: 22, title: "Golosinas", kind: "candy", color: "#7c3aed" },
 ];
 

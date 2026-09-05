@@ -161,7 +161,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                   className="overflow-hidden rounded-md border border-blue-100 bg-white transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="relative h-20 overflow-hidden bg-blue-50 sm:h-24">
-                    <PrizeImage name={prize.name} position={prize.position} />
+                    <PrizeImage name={prize.name} position={prize.position} src={prize.imageUrl} />
                   </div>
                   <div className="flex items-start gap-2 p-2.5">
                     <Badge

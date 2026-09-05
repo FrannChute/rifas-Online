@@ -1,3 +1,8 @@
+"use client";
+
+/* eslint-disable @next/next/no-img-element */
+
+import { useState } from "react";
 import { Dumbbell, Gift, Hotel, Scissors, Shirt, Sparkles, Utensils } from "lucide-react";
 
 function PrizeFallbackIcon({ name }: { name: string }) {
@@ -45,9 +50,24 @@ function PrizeFallbackIcon({ name }: { name: string }) {
 type PrizeImageProps = {
   name: string;
   position: number;
+  src: string | null;
 };
 
-export function PrizeImage({ name, position }: PrizeImageProps) {
+export function PrizeImage({ name, position, src }: PrizeImageProps) {
+  const [failed, setFailed] = useState(false);
+
+  if (src && !failed) {
+    return (
+      <img
+        alt={name}
+        className="size-full object-cover"
+        loading="lazy"
+        onError={() => setFailed(true)}
+        src={src}
+      />
+    );
+  }
+
   return (
     <div className="relative flex size-full items-center justify-center overflow-hidden bg-gradient-to-br from-blue-800 via-blue-600 to-orange-400 text-white">
       <span className="absolute -right-5 -top-7 size-24 rounded-full border-[14px] border-white/15" />

@@ -156,8 +156,8 @@ const bolivarPrizes = [
   },
   {
     position: 21,
-    name: "Premio 21",
-    description: "Premio adicional de la lista oficial de la rifa.",
+    name: "1 aceite de oliva + 1 docena de alfajores",
+    description: "Combo dulce con aceite de oliva y una docena de alfajores.",
   },
   {
     position: 22,
@@ -231,7 +231,7 @@ async function main() {
   const now = new Date();
   const startsAt = new Date("2026-09-02T15:06:00-03:00");
   const closesAt = new Date("2026-09-14T23:59:00-03:00");
-  const drawScheduledAt = new Date("2026-09-14T23:35:00-03:00");
+  const drawScheduledAt = new Date("2026-09-14T16:00:00-03:00");
 
   const raffle = await prisma.raffle.upsert({
     where: { slug: raffleSlug },

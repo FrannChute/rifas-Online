@@ -40,11 +40,24 @@ export async function repairBolivarPrizeImages() {
         where: { id: prize.id },
         data: {
           imageUrl: prizeImage(prize.position),
+          ...(prize.position === 21
+            ? {
+                name: "1 aceite de oliva + 1 docena de alfajores",
+                description: "Combo dulce con aceite de oliva y una docena de alfajores.",
+              }
+            : {}),
           active: true,
           deletedAt: null,
         },
       });
     }
+
+    await tx.raffle.update({
+      where: { id: raffle.id },
+      data: {
+        drawScheduledAt: new Date("2026-09-14T16:00:00-03:00"),
+      },
+    });
 
     await tx.rafflePaymentMethod.upsert({
       where: { raffleId_type: { raffleId: raffle.id, type: PaymentMethodType.CASH } },

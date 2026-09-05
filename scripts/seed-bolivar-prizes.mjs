@@ -136,8 +136,8 @@ const prizes = [
   },
   {
     position: 21,
-    name: "Premio 21",
-    description: "Premio adicional de la lista oficial de la rifa.",
+    name: "1 aceite de oliva + 1 docena de alfajores",
+    description: "Combo dulce con aceite de oliva y una docena de alfajores.",
     imageUrl: prizeImage(21),
   },
   {
