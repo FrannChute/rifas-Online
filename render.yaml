@@ -3,7 +3,8 @@ services:
     name: rifas-online
     runtime: node
     plan: free
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm build
+    buildCommand: npm install -g pnpm@11.19.0 && pnpm install --frozen-lockfile && pnpm build
+    preDeployCommand: pnpm prisma:deploy
     startCommand: pnpm start
     healthCheckPath: /api/health
     envVars:
