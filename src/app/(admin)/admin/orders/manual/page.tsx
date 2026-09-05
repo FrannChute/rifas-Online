@@ -95,16 +95,12 @@ export default async function ManualCashSalePage() {
               <Input id="lastName" name="lastName" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" required type="email" />
+              <Label htmlFor="email">Email opcional</Label>
+              <Input id="email" name="email" type="email" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Telefono</Label>
-              <Input id="phone" name="phone" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="whatsapp">WhatsApp</Label>
-              <Input id="whatsapp" name="whatsapp" />
+              <Input id="phone" name="phone" required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="dni">DNI opcional</Label>

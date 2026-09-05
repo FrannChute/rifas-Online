@@ -85,7 +85,7 @@ export function PaymentReceiptForm({ action, methods }: PaymentReceiptFormProps)
         <div className="space-y-2">
           <Label htmlFor="receipt">Comprobante</Label>
           <Input
-            accept="image/*,application/pdf"
+            accept="image/*"
             id="receipt"
             name="receipt"
             required

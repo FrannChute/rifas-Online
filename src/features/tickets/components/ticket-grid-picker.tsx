@@ -10,12 +10,7 @@ import { Label } from "@/components/ui/label";
 import { formatMoney } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-import {
-  ticketStatusClasses,
-  ticketStatusLabels,
-  ticketStatuses,
-  type TicketStatusValue,
-} from "../status";
+import { ticketStatusClasses, type TicketStatusValue } from "../status";
 
 export type TicketGridItem = {
   id: string;
@@ -71,6 +66,10 @@ export function TicketGridPicker({
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<TicketStatusValue | "ALL">("ALL");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const publicFilters = [
+    { label: "Todos", value: "ALL" as const },
+    { label: "Disponible", value: "AVAILABLE" as const },
+  ];
 
   const visibleTickets = useMemo(
     () =>
@@ -123,23 +122,15 @@ export function TicketGridPicker({
           />
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            onClick={() => setStatus("ALL")}
-            size="sm"
-            type="button"
-            variant={status === "ALL" ? "default" : "outline"}
-          >
-            Todos
-          </Button>
-          {ticketStatuses.map((ticketStatus) => (
+          {publicFilters.map((filter) => (
             <Button
-              key={ticketStatus}
-              onClick={() => setStatus(ticketStatus)}
+              key={filter.value}
+              onClick={() => setStatus(filter.value)}
               size="sm"
               type="button"
-              variant={status === ticketStatus ? "default" : "outline"}
+              variant={status === filter.value ? "default" : "outline"}
             >
-              {ticketStatusLabels[ticketStatus]}
+              {filter.label}
             </Button>
           ))}
         </div>
@@ -231,16 +222,12 @@ export function TicketGridPicker({
                   <Input id="lastName" name="lastName" required />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" name="email" required type="email" />
+                  <Label htmlFor="email">Email opcional</Label>
+                  <Input id="email" name="email" type="email" />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
                   <Label htmlFor="phone">Telefono</Label>
-                  <Input id="phone" name="phone" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="whatsapp">WhatsApp</Label>
-                  <Input id="whatsapp" name="whatsapp" />
+                  <Input id="phone" name="phone" required />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
                   <Label htmlFor="dni">DNI opcional</Label>

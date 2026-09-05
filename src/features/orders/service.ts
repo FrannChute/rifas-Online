@@ -41,9 +41,17 @@ async function createUniquePublicCode(tx: TransactionClient) {
 }
 
 async function getOrCreateParticipant(tx: TransactionClient, input: ParticipantCheckoutInput) {
-  const existing = await tx.participant.findUnique({
-    where: { email: input.email },
-  });
+  let existing = input.email
+    ? await tx.participant.findUnique({
+        where: { email: input.email },
+      })
+    : null;
+
+  if (!existing && input.dni) {
+    existing = await tx.participant.findUnique({
+      where: { dni: input.dni },
+    });
+  }
 
   if (existing) {
     return tx.participant.update({
@@ -51,8 +59,9 @@ async function getOrCreateParticipant(tx: TransactionClient, input: ParticipantC
       data: {
         firstName: input.firstName,
         lastName: input.lastName,
+        email: input.email ?? existing.email,
         phone: input.phone ?? null,
-        whatsapp: input.whatsapp ?? null,
+        whatsapp: input.phone ?? input.whatsapp ?? null,
         dni: input.dni ?? null,
         deletedAt: null,
       },
@@ -63,9 +72,9 @@ async function getOrCreateParticipant(tx: TransactionClient, input: ParticipantC
     data: {
       firstName: input.firstName,
       lastName: input.lastName,
-      email: input.email,
+      email: input.email ?? null,
       phone: input.phone ?? null,
-      whatsapp: input.whatsapp ?? null,
+      whatsapp: input.phone ?? input.whatsapp ?? null,
       dni: input.dni ?? null,
     },
   });

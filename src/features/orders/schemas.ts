@@ -13,11 +13,24 @@ const optionalString = z.preprocess((value) => {
   return trimmed.length > 0 ? trimmed : undefined;
 }, z.string().optional());
 
+const optionalEmail = z.preprocess((value) => {
+  if (value === null || value === undefined) {
+    return undefined;
+  }
+
+  if (typeof value !== "string") {
+    return value;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}, z.string().email().max(180).optional());
+
 export const participantCheckoutSchema = z.object({
   firstName: z.string().trim().min(2).max(80),
   lastName: z.string().trim().min(2).max(80),
-  email: z.string().trim().email().max(180),
-  phone: optionalString,
+  email: optionalEmail,
+  phone: z.string().trim().min(6).max(40),
   whatsapp: optionalString,
   dni: optionalString,
 });
@@ -38,12 +51,13 @@ export function parseReservationForm(formData: FormData) {
     throw new Error("No se pudo identificar la rifa.");
   }
 
+  const phone = formData.get("phone");
   const participant = participantCheckoutSchema.parse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
     email: formData.get("email"),
-    phone: formData.get("phone"),
-    whatsapp: formData.get("whatsapp"),
+    phone,
+    whatsapp: phone,
     dni: formData.get("dni"),
   });
 
@@ -78,12 +92,13 @@ export function parseManualCashSaleForm(formData: FormData) {
     throw new Error("Selecciona una rifa.");
   }
 
+  const phone = formData.get("phone");
   const participant = participantCheckoutSchema.parse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
     email: formData.get("email"),
-    phone: formData.get("phone"),
-    whatsapp: formData.get("whatsapp"),
+    phone,
+    whatsapp: phone,
     dni: formData.get("dni"),
   });
 

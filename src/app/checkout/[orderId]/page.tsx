@@ -65,6 +65,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
   );
   const latestPayment = order.payments[0];
   const uploadAction = submitPaymentReceiptWithStateAction.bind(null, order.id);
+  const isCashPayment = latestPayment?.method === PaymentMethodType.CASH;
 
   return (
     <main className="min-h-screen club-shell text-foreground">
@@ -102,7 +103,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                 </div>
                 <div className="court-chip rounded-md px-3 py-2">
                   <dt className="text-muted-foreground">Email</dt>
-                  <dd className="mt-1 font-medium">{order.participant.email}</dd>
+                  <dd className="mt-1 font-medium">{order.participant.email ?? "No informado"}</dd>
                 </div>
                 <div className="court-chip rounded-md px-3 py-2">
                   <dt className="text-muted-foreground">Expira</dt>
@@ -134,22 +135,30 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
               </div>
               {bankMethod ? (
                 <dl className="space-y-3 text-sm">
-                  <div>
-                    <dt className="text-muted-foreground">Alias</dt>
-                    <dd className="font-semibold">{bankMethod.alias ?? "Sin alias"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">CBU</dt>
-                    <dd className="font-semibold">{bankMethod.cbu ?? "Sin CBU"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">CVU</dt>
-                    <dd className="font-semibold">{bankMethod.cvu ?? "Sin CVU"}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Titular</dt>
-                    <dd className="font-semibold">{bankMethod.accountHolder ?? "Sin titular"}</dd>
-                  </div>
+                  {bankMethod.alias ? (
+                    <div>
+                      <dt className="text-muted-foreground">Alias</dt>
+                      <dd className="font-semibold">{bankMethod.alias}</dd>
+                    </div>
+                  ) : null}
+                  {bankMethod.cbu ? (
+                    <div>
+                      <dt className="text-muted-foreground">CBU</dt>
+                      <dd className="font-semibold">{bankMethod.cbu}</dd>
+                    </div>
+                  ) : null}
+                  {bankMethod.cvu ? (
+                    <div>
+                      <dt className="text-muted-foreground">CVU</dt>
+                      <dd className="font-semibold">{bankMethod.cvu}</dd>
+                    </div>
+                  ) : null}
+                  {bankMethod.accountHolder ? (
+                    <div>
+                      <dt className="text-muted-foreground">Titular</dt>
+                      <dd className="font-semibold">{bankMethod.accountHolder}</dd>
+                    </div>
+                  ) : null}
                   {bankMethod.instructions ? (
                     <div>
                       <dt className="text-muted-foreground">Instrucciones</dt>
@@ -167,12 +176,19 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             {latestPayment ? (
               <div className="club-card rounded-lg border bg-card p-5">
                 <Badge variant="outline">{latestPayment.status}</Badge>
-                <h2 className="mt-2 text-lg font-semibold">Comprobante recibido</h2>
+                <h2 className="mt-2 text-lg font-semibold">
+                  {isCashPayment ? "Venta en efectivo confirmada" : "Comprobante recibido"}
+                </h2>
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  El pago queda pendiente de revision administrativa hasta su aprobacion. Metodo:{" "}
+                  {isCashPayment
+                    ? "Tus numeros ya figuran pagados. No hace falta subir comprobante para ventas en efectivo registradas por administracion."
+                    : "Tus numeros ya quedaron apartados y el comprobante esta en revision. Te vamos a confirmar cuando el administrador lo apruebe."}{" "}
+                  Metodo:{" "}
                   {latestPayment.method === PaymentMethodType.MERCADO_PAGO
                     ? "Mercado Pago"
-                    : "Transferencia bancaria"}
+                    : latestPayment.method === PaymentMethodType.CASH
+                      ? "Efectivo"
+                      : "Transferencia bancaria"}
                 </p>
                 {latestPayment.receiptAsset ? (
                   <p className="mt-3 text-xs text-muted-foreground">

@@ -9,7 +9,7 @@ import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { SiteNav } from "@/components/site-nav";
 import { reserveTicketsWithStateAction } from "@/features/orders/public-actions";
 import { TicketGridPicker } from "@/features/tickets/components/ticket-grid-picker";
-import { ticketStatusLabels, type TicketStatusValue } from "@/features/tickets/status";
+import { type TicketStatusValue } from "@/features/tickets/status";
 import { getPlatformSettings, getPublicRaffleBySlug } from "@/features/raffles/service";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { isDatabaseUnavailableError } from "@/lib/errors";
@@ -24,6 +24,18 @@ type RafflePageProps = {
 
 function statValue(stats: Record<string, number>, status: TicketStatusValue) {
   return stats[status] ?? 0;
+}
+
+function publicReservedCount(stats: Record<string, number>) {
+  return (
+    statValue(stats, "RESERVED") +
+    statValue(stats, "PAYMENT_PENDING") +
+    statValue(stats, "CANCELLED")
+  );
+}
+
+function publicPaidCount(stats: Record<string, number>) {
+  return statValue(stats, "PAID") + statValue(stats, "WINNER");
 }
 
 async function loadPublicRaffleData(slug: string) {
@@ -68,7 +80,13 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
 
   const { raffle } = data;
   const ticketCount = raffle.endNumber - raffle.startNumber + 1;
-  const soldCount = statValue(raffle.ticketStats, "PAID") + statValue(raffle.ticketStats, "WINNER");
+  const soldCount = publicPaidCount(raffle.ticketStats);
+  const publicPaymentMethods = raffle.paymentMethods.filter((method) => method.type !== "CASH");
+  const publicTicketStats = [
+    { label: "Disponible", value: statValue(raffle.ticketStats, "AVAILABLE") },
+    { label: "Reservado", value: publicReservedCount(raffle.ticketStats) },
+    { label: "Pagado", value: soldCount },
+  ];
 
   return (
     <main className="min-h-screen club-shell text-foreground">
@@ -124,6 +142,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                 className="object-cover"
                 fill
                 priority
+                unoptimized
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 src={raffle.imageUrl}
               />
@@ -142,24 +161,25 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
               </div>
               <span className="basketball-mark size-10" aria-hidden="true" />
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-4">
               {raffle.prizes.map((prize) => (
                 <article
                   key={prize.id}
                   className="overflow-hidden rounded-md border border-blue-100 bg-white transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-md"
                 >
                   {prize.imageUrl ? (
-                    <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                    <div className="relative h-20 overflow-hidden bg-muted sm:h-24">
                       <Image
                         alt=""
                         className="object-cover"
                         fill
+                        unoptimized
                         sizes="(min-width: 1280px) 20vw, (min-width: 640px) 50vw, 100vw"
                         src={prize.imageUrl}
                       />
                     </div>
                   ) : null}
-                  <div className="flex items-start gap-2 p-3">
+                  <div className="flex items-start gap-2 p-2.5">
                     <Badge
                       className="border-orange-200 bg-orange-50 text-orange-800"
                       variant="outline"
@@ -167,9 +187,9 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                       {prize.position}
                     </Badge>
                     <div>
-                      <h3 className="font-semibold">{prize.name}</h3>
+                      <h3 className="text-sm font-semibold leading-5">{prize.name}</h3>
                       {prize.description ? (
-                        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                        <p className="mt-1 text-xs leading-5 text-muted-foreground">
                           {prize.description}
                         </p>
                       ) : null}
@@ -221,7 +241,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
               <h2 className="text-lg font-semibold">Pago</h2>
             </div>
             <div className="space-y-2">
-              {raffle.paymentMethods.map((method) => (
+              {publicPaymentMethods.map((method) => (
                 <div className="rounded-md border border-border px-3 py-2 text-sm" key={method.id}>
                   <p className="font-medium">{method.displayName}</p>
                   {method.instructions ? (
@@ -238,12 +258,10 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
               <h2 className="text-lg font-semibold">Estados</h2>
             </div>
             <dl className="space-y-2 text-sm">
-              {Object.entries(ticketStatusLabels).map(([statusKey, label]) => (
-                <div className="flex items-center justify-between gap-3" key={statusKey}>
-                  <dt className="text-muted-foreground">{label}</dt>
-                  <dd className="font-semibold">
-                    {raffle.ticketStats[statusKey as TicketStatusValue] ?? 0}
-                  </dd>
+              {publicTicketStats.map((item) => (
+                <div className="flex items-center justify-between gap-3" key={item.label}>
+                  <dt className="text-muted-foreground">{item.label}</dt>
+                  <dd className="font-semibold">{item.value}</dd>
                 </div>
               ))}
             </dl>
