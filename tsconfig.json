@@ -15,7 +15,7 @@
     "incremental": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "types": ["node", "@testing-library/jest-dom"],
+    "types": ["node"],
     "plugins": [
       {
         "name": "next"
@@ -35,6 +35,9 @@
   ],
   "exclude": [
     "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "vitest.setup.ts",
     "src/generated/prisma",
     "tmp-next-bootstrap",
     "tmp-prisma-init",
