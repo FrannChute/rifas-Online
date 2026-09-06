@@ -97,6 +97,19 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
         <Button type="submit">Buscar</Button>
       </form>
 
+      <div className="grid gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4 text-blue-950 md:grid-cols-[1fr_auto]">
+        <div>
+          <h3 className="font-semibold">Aprobar transferencias</h3>
+          <p className="mt-1 text-sm leading-6">
+            Cuando alguien sube un comprobante, revisalo desde Pagos. Ahi podes aprobarlo o
+            rechazarlo; al aprobar, los numeros quedan pagados automaticamente.
+          </p>
+        </div>
+        <Button asChild className="self-end">
+          <Link href="/admin/payments">Ir a pagos</Link>
+        </Button>
+      </div>
+
       {data.result.tickets.length > 0 ? (
         <form action={releaseTicketsFromAdminAction} className="space-y-3">
           <div className="grid gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950 md:grid-cols-[1fr_auto]">

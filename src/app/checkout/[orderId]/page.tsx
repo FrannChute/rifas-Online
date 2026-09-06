@@ -225,8 +225,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
               </div>
             ) : (
               <>
-                {cashMethod ? <CashPaymentForm action={cashAction} /> : null}
                 <PaymentReceiptForm action={uploadAction} methods={receiptMethods} />
+                {cashMethod ? <CashPaymentForm action={cashAction} /> : null}
               </>
             )}
           </aside>
