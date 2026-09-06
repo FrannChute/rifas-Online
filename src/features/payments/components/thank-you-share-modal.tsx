@@ -3,7 +3,8 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useMemo, useState } from "react";
-import { Copy, HeartHandshake, Share2, X } from "lucide-react";
+import Link from "next/link";
+import { Copy, HeartHandshake, ImageDown, Share2, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -16,6 +17,8 @@ type ThankYouShareModalProps = {
 export function ThankYouShareModal({ imageUrl, raffleName, raffleSlug }: ThankYouShareModalProps) {
   const [open, setOpen] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+  const heroImageUrl = imageUrl ?? "/team/bolivar-u17-equipo-1.png";
   const shareUrl = useMemo(() => {
     if (typeof window === "undefined") {
       return `/raffles/${raffleSlug}`;
@@ -46,8 +49,13 @@ export function ThankYouShareModal({ imageUrl, raffleName, raffleSlug }: ThankYo
           <X aria-hidden="true" className="size-5" />
         </button>
         <div className="relative h-52 bg-gradient-to-br from-blue-700 to-orange-500">
-          {imageUrl ? (
-            <img alt="" className="size-full object-cover" src={imageUrl} />
+          {!imageFailed ? (
+            <img
+              alt=""
+              className="size-full object-cover"
+              onError={() => setImageFailed(true)}
+              src={heroImageUrl}
+            />
           ) : (
             <div className="flex size-full items-center justify-center text-white">
               <HeartHandshake aria-hidden="true" className="size-20" />
@@ -77,10 +85,16 @@ export function ThankYouShareModal({ imageUrl, raffleName, raffleSlug }: ThankYo
           <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm leading-6 text-slate-700">
             {shareText}
           </div>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-3">
             <Button className="w-full" onClick={copyShareText} type="button">
               <Copy aria-hidden="true" />
               {copied ? "Mensaje copiado" : "Copiar mensaje"}
+            </Button>
+            <Button asChild className="w-full" variant="secondary">
+              <Link href="/share">
+                <ImageDown aria-hidden="true" />
+                Ver banner
+              </Link>
             </Button>
             <Button
               className="w-full"

@@ -80,7 +80,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     <main className="min-h-screen club-shell text-foreground">
       {latestPayment ? (
         <ThankYouShareModal
-          imageUrl={order.raffle.imageUrl}
+          imageUrl="/team/bolivar-u17-equipo-1.png"
           raffleName={order.raffle.name}
           raffleSlug={order.raffle.slug}
         />

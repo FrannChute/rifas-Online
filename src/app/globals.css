@@ -117,10 +117,52 @@ a {
   mask-image: linear-gradient(180deg, black, transparent 78%);
 }
 
+.club-shell::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, rgba(244, 247, 251, 0.58), rgba(244, 247, 251, 0.9)),
+    url("/team/bolivar-u17-equipo-2.png"), url("/team/bolivar-u17-equipo-3.png");
+  background-position:
+    center,
+    right 4rem top 7rem,
+    left -8rem bottom 8rem;
+  background-repeat: no-repeat;
+  background-size:
+    cover,
+    min(34rem, 62vw) auto,
+    min(38rem, 70vw) auto;
+  opacity: 0.18;
+}
+
 .club-panel {
   background:
     linear-gradient(135deg, rgba(11, 63, 168, 0.98), rgba(4, 26, 74, 0.98)), var(--club-blue);
   color: #ffffff;
+}
+
+.team-photo-soft {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.team-photo-soft::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background:
+    linear-gradient(
+      135deg,
+      rgba(4, 26, 74, 0.92),
+      rgba(11, 63, 168, 0.7),
+      rgba(249, 115, 22, 0.52)
+    ),
+    var(--team-photo, url("/team/bolivar-u17-equipo-1.png")) center/cover;
 }
 
 .club-card {
