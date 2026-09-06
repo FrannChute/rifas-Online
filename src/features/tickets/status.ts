@@ -19,10 +19,11 @@ export const ticketStatusLabels = {
 } satisfies Record<TicketStatusValue, string>;
 
 export const ticketStatusClasses = {
-  AVAILABLE: "border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100",
-  RESERVED: "border-amber-200 bg-amber-50 text-amber-800",
-  PAYMENT_PENDING: "border-sky-200 bg-sky-50 text-sky-800",
-  PAID: "border-slate-300 bg-slate-100 text-slate-700",
-  WINNER: "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-800",
-  CANCELLED: "border-rose-200 bg-rose-50 text-rose-800",
+  AVAILABLE:
+    "border-emerald-800 bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 hover:shadow-md",
+  RESERVED: "border-slate-700 bg-slate-800 text-white",
+  PAYMENT_PENDING: "border-blue-800 bg-blue-700 text-white",
+  PAID: "border-slate-950 bg-slate-900 text-white",
+  WINNER: "border-fuchsia-800 bg-fuchsia-700 text-white",
+  CANCELLED: "border-rose-800 bg-rose-700 text-white",
 } satisfies Record<TicketStatusValue, string>;

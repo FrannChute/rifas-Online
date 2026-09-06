@@ -157,9 +157,9 @@ export function TicketGridPicker({
                   className={cn(
                     "h-11 rounded-md border px-2 text-sm font-semibold tabular-nums transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     ticketStatusClasses[ticket.status],
-                    ticket.status !== "AVAILABLE" && "cursor-not-allowed opacity-75",
+                    ticket.status !== "AVAILABLE" && "cursor-not-allowed",
                     selected &&
-                      "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
+                      "border-orange-900 bg-orange-500 text-white shadow-md ring-2 ring-orange-900 hover:bg-orange-600",
                   )}
                   disabled={ticket.status !== "AVAILABLE"}
                   key={ticket.id}

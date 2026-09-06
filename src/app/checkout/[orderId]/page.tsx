@@ -9,6 +9,7 @@ import { SiteNav } from "@/components/site-nav";
 import { getCheckoutOrder } from "@/features/orders/service";
 import { CashPaymentForm } from "@/features/payments/components/cash-payment-form";
 import { PaymentReceiptForm } from "@/features/payments/components/payment-receipt-form";
+import { ThankYouShareModal } from "@/features/payments/components/thank-you-share-modal";
 import {
   submitCashPaymentWithStateAction,
   submitPaymentReceiptWithStateAction,
@@ -77,6 +78,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
   return (
     <main className="min-h-screen club-shell text-foreground">
+      {latestPayment ? (
+        <ThankYouShareModal
+          imageUrl={order.raffle.imageUrl}
+          raffleName={order.raffle.name}
+          raffleSlug={order.raffle.slug}
+        />
+      ) : null}
       <SiteNav />
       <section className="relative z-10 mx-auto w-full max-w-5xl space-y-6 px-4 py-8 sm:px-6">
         <Button asChild className="w-fit" size="sm" variant="ghost">
