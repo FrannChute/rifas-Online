@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, LogIn, Trophy } from "lucide-react";
+import { LayoutDashboard, LogIn, Share2, Trophy } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -25,6 +25,12 @@ export function SiteNav({ platformName = "Rifas Online" }: SiteNavProps) {
             <Link href="/winners">
               <Trophy aria-hidden="true" />
               <span className="hidden sm:inline">Ganadores</span>
+            </Link>
+          </Button>
+          <Button asChild size="sm" variant="ghost">
+            <Link href="/share">
+              <Share2 aria-hidden="true" />
+              <span className="hidden sm:inline">Compartir</span>
             </Link>
           </Button>
           <Button asChild size="sm" variant="ghost">

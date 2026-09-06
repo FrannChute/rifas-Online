@@ -42,18 +42,18 @@ export default function SharePage() {
           />
         </div>
 
-        <div className="grid gap-3 rounded-xl border bg-card p-4 shadow-sm sm:grid-cols-[1fr_auto_auto]">
+        <div className="grid gap-4 rounded-xl border bg-card p-5 shadow-sm lg:grid-cols-[1fr_auto_auto] lg:items-center">
           <div>
             <p className="font-semibold">Mensaje sugerido</p>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">{shareMessage}</p>
           </div>
-          <Button asChild>
+          <Button asChild className="h-14 px-6 text-base font-bold">
             <a download href="/share/bolivar-u17-banner.svg">
               <ImageDown aria-hidden="true" />
               Descargar banner
             </a>
           </Button>
-          <Button asChild variant="outline">
+          <Button asChild className="h-14 px-6 text-base font-bold" variant="outline">
             <a href={appUrl}>
               <ExternalLink aria-hidden="true" />
               Abrir rifa
