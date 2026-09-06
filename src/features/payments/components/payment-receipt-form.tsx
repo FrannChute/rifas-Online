@@ -82,9 +82,29 @@ export function PaymentReceiptForm({ action, methods }: PaymentReceiptFormProps)
             </p>
           )}
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="receipt">Comprobante</Label>
-          <Input accept="image/*" id="receipt" name="receipt" required type="file" />
+        <div className="rounded-lg border-2 border-dashed border-orange-300 bg-orange-50 p-4 shadow-sm">
+          <div className="mb-3 flex items-start gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-orange-500 text-white">
+              <FileUp aria-hidden="true" className="size-5" />
+            </span>
+            <div>
+              <Label className="text-base font-bold text-orange-950" htmlFor="receipt">
+                Foto del comprobante
+              </Label>
+              <p className="mt-1 text-sm leading-5 text-orange-900">
+                Si pagas por transferencia, subi una captura o foto clara del comprobante para que
+                pueda aprobarlo.
+              </p>
+            </div>
+          </div>
+          <Input
+            accept="image/*"
+            className="h-14 cursor-pointer border-orange-300 bg-white text-sm file:mr-4 file:rounded-md file:border-0 file:bg-blue-700 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:border-orange-500"
+            id="receipt"
+            name="receipt"
+            required
+            type="file"
+          />
         </div>
         {state.error ? (
           <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm leading-5 text-destructive">
