@@ -46,6 +46,11 @@ export function parseReservationForm(formData: FormData) {
     throw new Error("Selecciona al menos un numero disponible.");
   }
 
+  const uniqueTicketIds = Array.from(new Set(ticketIds));
+  if (uniqueTicketIds.length > 10 && formData.get("largePurchaseConfirmed") !== "on") {
+    throw new Error("Confirma la compra de mas de 10 numeros para continuar.");
+  }
+
   const raffleId = formData.get("raffleId");
   if (typeof raffleId !== "string" || raffleId.length === 0) {
     throw new Error("No se pudo identificar la rifa.");
@@ -63,7 +68,7 @@ export function parseReservationForm(formData: FormData) {
 
   return {
     raffleId,
-    ticketIds: Array.from(new Set(ticketIds)),
+    ticketIds: uniqueTicketIds,
     participant,
   };
 }

@@ -84,13 +84,7 @@ export function PaymentReceiptForm({ action, methods }: PaymentReceiptFormProps)
         </div>
         <div className="space-y-2">
           <Label htmlFor="receipt">Comprobante</Label>
-          <Input
-            accept="image/*"
-            id="receipt"
-            name="receipt"
-            required
-            type="file"
-          />
+          <Input accept="image/*" id="receipt" name="receipt" required type="file" />
         </div>
         {state.error ? (
           <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm leading-5 text-destructive">

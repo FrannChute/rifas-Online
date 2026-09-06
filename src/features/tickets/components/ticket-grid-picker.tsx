@@ -86,6 +86,7 @@ export function TicketGridPicker({
     [selectedIds, tickets],
   );
   const total = selectedTickets.length * Number(price);
+  const needsLargePurchaseConfirmation = selectedTickets.length > 10;
 
   function toggleTicket(ticket: TicketGridItem) {
     if (ticket.status !== "AVAILABLE") {
@@ -211,6 +212,19 @@ export function TicketGridPicker({
                 Elegi uno o mas numeros disponibles.
               </p>
             )}
+            {needsLargePurchaseConfirmation ? (
+              <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
+                <p className="font-semibold">Estas eligiendo mas de 10 numeros.</p>
+                <p className="mt-1 leading-5">
+                  Es una ayuda muy grande para los chicos de la U17. Confirmalo solo si estas seguro
+                  de continuar.
+                </p>
+                <label className="mt-3 flex items-start gap-2 text-sm">
+                  <input className="mt-1" name="largePurchaseConfirmed" required type="checkbox" />
+                  <span>Si, confirmo que quiero reservar esta cantidad de numeros.</span>
+                </label>
+              </div>
+            ) : null}
             <div className="space-y-3 border-t border-border pt-3">
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                 <div className="space-y-1.5">

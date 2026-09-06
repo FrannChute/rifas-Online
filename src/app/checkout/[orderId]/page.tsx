@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CreditCard, Ticket } from "lucide-react";
+import { ArrowLeft, CreditCard, HeartHandshake, Sparkles, Ticket } from "lucide-react";
 
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { Badge } from "@/components/ui/badge";
@@ -182,27 +182,46 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
             </div>
 
             {latestPayment ? (
-              <div className="club-card rounded-lg border bg-card p-5">
-                <Badge variant="outline">{latestPayment.status}</Badge>
-                <h2 className="mt-2 text-lg font-semibold">
-                  {isCashPayment ? "Venta en efectivo confirmada" : "Comprobante recibido"}
-                </h2>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">
-                  {isCashPayment
-                    ? "Tus numeros ya figuran pagados. No hace falta subir comprobante para ventas en efectivo registradas por administracion."
-                    : "Tus numeros ya quedaron apartados y el comprobante esta en revision. Te vamos a confirmar cuando el administrador lo apruebe."}{" "}
-                  Metodo:{" "}
-                  {latestPayment.method === PaymentMethodType.MERCADO_PAGO
-                    ? "Mercado Pago"
-                    : latestPayment.method === PaymentMethodType.CASH
-                      ? "Efectivo"
-                      : "Transferencia bancaria"}
-                </p>
-                {latestPayment.receiptAsset ? (
-                  <p className="mt-3 text-xs text-muted-foreground">
-                    Archivo privado: {latestPayment.receiptAsset.originalName}
+              <div className="club-card overflow-hidden rounded-lg border bg-card shadow-sm">
+                <div className="bg-gradient-to-br from-blue-700 via-blue-600 to-orange-500 p-5 text-white">
+                  <div className="mb-4 flex items-center gap-3">
+                    <span className="grid size-12 place-items-center rounded-full bg-white/18">
+                      <HeartHandshake aria-hidden="true" className="size-6" />
+                    </span>
+                    <Badge className="border-white/35 bg-white/15 text-white" variant="outline">
+                      {isCashPayment ? "Pago confirmado" : "Pago enviado"}
+                    </Badge>
+                  </div>
+                  <h2 className="text-2xl font-semibold leading-tight">Gracias por colaborar</h2>
+                  <p className="mt-3 text-sm leading-6 text-white/90">
+                    Tu aporte ayuda a los chicos de la U17 de Bolivar y acompaña este proyecto hecho
+                    con esfuerzo por Fran Chute.
                   </p>
-                ) : null}
+                </div>
+                <div className="p-5">
+                  <div className="mb-3 flex items-center gap-2">
+                    <Sparkles aria-hidden="true" className="size-5 text-orange-500" />
+                    <h3 className="text-lg font-semibold">
+                      {isCashPayment ? "Venta en efectivo confirmada" : "Comprobante recibido"}
+                    </h3>
+                  </div>
+                  <p className="text-sm leading-6 text-muted-foreground">
+                    {isCashPayment
+                      ? "Tus numeros ya figuran pagados. No hace falta subir comprobante."
+                      : "Tus numeros quedaron en proceso de revision. Apenas se confirme el comprobante, el administrador los marca como pagados."}{" "}
+                    Metodo:{" "}
+                    {latestPayment.method === PaymentMethodType.MERCADO_PAGO
+                      ? "Mercado Pago"
+                      : latestPayment.method === PaymentMethodType.CASH
+                        ? "Efectivo"
+                        : "Transferencia bancaria"}
+                  </p>
+                  {latestPayment.receiptAsset ? (
+                    <p className="mt-3 text-xs text-muted-foreground">
+                      Archivo privado: {latestPayment.receiptAsset.originalName}
+                    </p>
+                  ) : null}
+                </div>
               </div>
             ) : (
               <>

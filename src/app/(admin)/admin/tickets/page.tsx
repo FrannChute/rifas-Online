@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { releaseTicketsFromAdminAction } from "@/features/tickets/actions";
 import { listAdminTickets } from "@/features/tickets/service";
 import { ticketStatusLabels, ticketStatuses } from "@/features/tickets/status";
 import { isDatabaseUnavailableError } from "@/lib/errors";
@@ -62,7 +63,8 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
         <Badge variant="outline">Consulta operativa</Badge>
         <h2 className="text-2xl font-semibold">Tickets</h2>
         <p className="text-sm leading-6 text-muted-foreground">
-          Busca por numero exacto, rango o estado. La tabla muestra datos persistidos.
+          Busca por nombre, telefono, numero exacto, rango o estado. Desde aca podes liberar numeros
+          ocupados por error o por bromas.
         </p>
       </div>
 
@@ -77,7 +79,7 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
             className="pl-9"
             defaultValue={data.query}
             name="q"
-            placeholder="0327 o 100-150"
+            placeholder="Nombre, telefono, 0327 o 100-150"
           />
         </div>
         <select
@@ -96,44 +98,74 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
       </form>
 
       {data.result.tickets.length > 0 ? (
-        <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
-          <table className="w-full min-w-[920px] text-left text-sm">
-            <thead className="border-b border-border text-xs uppercase text-muted-foreground">
-              <tr>
-                <th className="px-4 py-3 font-medium">Numero</th>
-                <th className="px-4 py-3 font-medium">Estado</th>
-                <th className="px-4 py-3 font-medium">Rifa</th>
-                <th className="px-4 py-3 font-medium">Participante</th>
-                <th className="px-4 py-3 font-medium">Orden</th>
-                <th className="px-4 py-3 font-medium">Reserva</th>
-                <th className="px-4 py-3 font-medium">Accion</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {data.result.tickets.map((ticket) => (
-                <tr key={ticket.id}>
-                  <td className="px-4 py-3 font-semibold tabular-nums">{ticket.label}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant="outline">{ticketStatusLabels[ticket.status]}</Badge>
-                  </td>
-                  <td className="px-4 py-3">{ticket.raffle.name}</td>
-                  <td className="px-4 py-3">
-                    {ticket.participant
-                      ? `${ticket.participant.firstName} ${ticket.participant.lastName}`
-                      : "Sin asignar"}
-                  </td>
-                  <td className="px-4 py-3">{ticket.currentOrder?.publicCode ?? "Sin orden"}</td>
-                  <td className="px-4 py-3">{formatDateTime(ticket.reservedUntil)}</td>
-                  <td className="px-4 py-3">
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={`/admin/tickets/${ticket.id}`}>Historial</Link>
-                    </Button>
-                  </td>
+        <form action={releaseTicketsFromAdminAction} className="space-y-3">
+          <div className="grid gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950 md:grid-cols-[1fr_auto]">
+            <div>
+              <h3 className="font-semibold">Liberar numeros seleccionados</h3>
+              <p className="mt-1 text-sm leading-6">
+                Esto deja los numeros disponibles para otra persona y guarda el historial. No toca
+                los demas compradores.
+              </p>
+              <Input
+                className="mt-3 bg-white"
+                name="reason"
+                placeholder="Motivo, por ejemplo: compra falsa o correccion manual"
+              />
+            </div>
+            <Button className="self-end" type="submit" variant="destructive">
+              Liberar seleccionados
+            </Button>
+          </div>
+
+          <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
+            <table className="w-full min-w-[980px] text-left text-sm">
+              <thead className="border-b border-border text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Liberar</th>
+                  <th className="px-4 py-3 font-medium">Numero</th>
+                  <th className="px-4 py-3 font-medium">Estado</th>
+                  <th className="px-4 py-3 font-medium">Rifa</th>
+                  <th className="px-4 py-3 font-medium">Participante</th>
+                  <th className="px-4 py-3 font-medium">Orden</th>
+                  <th className="px-4 py-3 font-medium">Reserva</th>
+                  <th className="px-4 py-3 font-medium">Accion</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {data.result.tickets.map((ticket) => (
+                  <tr key={ticket.id}>
+                    <td className="px-4 py-3">
+                      <input
+                        aria-label={`Liberar numero ${ticket.label}`}
+                        disabled={ticket.status === "AVAILABLE" || ticket.status === "WINNER"}
+                        name="ticketIds"
+                        type="checkbox"
+                        value={ticket.id}
+                      />
+                    </td>
+                    <td className="px-4 py-3 font-semibold tabular-nums">{ticket.label}</td>
+                    <td className="px-4 py-3">
+                      <Badge variant="outline">{ticketStatusLabels[ticket.status]}</Badge>
+                    </td>
+                    <td className="px-4 py-3">{ticket.raffle.name}</td>
+                    <td className="px-4 py-3">
+                      {ticket.participant
+                        ? `${ticket.participant.firstName} ${ticket.participant.lastName}`
+                        : "Sin asignar"}
+                    </td>
+                    <td className="px-4 py-3">{ticket.currentOrder?.publicCode ?? "Sin orden"}</td>
+                    <td className="px-4 py-3">{formatDateTime(ticket.reservedUntil)}</td>
+                    <td className="px-4 py-3">
+                      <Button asChild size="sm" variant="outline">
+                        <Link href={`/admin/tickets/${ticket.id}`}>Historial</Link>
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </form>
       ) : (
         <EmptyState
           description="Ajusta los filtros o genera tickets creando una rifa."
