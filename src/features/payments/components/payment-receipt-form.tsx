@@ -52,7 +52,7 @@ export function PaymentReceiptForm({ action, methods }: PaymentReceiptFormProps)
             <div className="grid gap-2">
               {receiptMethods.map((method, index) => (
                 <label
-                  className="flex cursor-pointer items-start gap-3 rounded-md border border-blue-100 bg-white px-3 py-2 text-sm transition hover:border-primary/40 hover:bg-secondary/60"
+                  className="flex cursor-pointer items-start gap-3 rounded-md border border-blue-100 bg-white px-3 py-2 text-sm shadow-sm transition-[transform,box-shadow,border-color,background-color] duration-200 hover:-translate-y-0.5 hover:border-primary/50 hover:bg-secondary/70 hover:shadow-md"
                   key={method.type}
                 >
                   <input
@@ -112,7 +112,7 @@ export function PaymentReceiptForm({ action, methods }: PaymentReceiptFormProps)
           </p>
         ) : null}
         <Button
-          className="w-full"
+          className="shiny-action w-full"
           disabled={isPending || receiptMethods.length === 0}
           type="submit"
         >

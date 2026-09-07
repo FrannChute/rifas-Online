@@ -155,7 +155,7 @@ export function TicketGridPicker({
                 <button
                   aria-pressed={selected}
                   className={cn(
-                    "h-11 rounded-md border px-2 text-sm font-semibold tabular-nums transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    "h-11 rounded-md border px-2 text-sm font-semibold tabular-nums transition-[transform,box-shadow,background-color,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     ticketStatusClasses[ticket.status],
                     ticket.status !== "AVAILABLE" && "cursor-not-allowed",
                     selected &&
@@ -250,7 +250,7 @@ export function TicketGridPicker({
                 </p>
               ) : null}
               <Button
-                className="w-full"
+                className="shiny-action w-full"
                 disabled={selectedTickets.length === 0 || isPending}
                 type="submit"
               >

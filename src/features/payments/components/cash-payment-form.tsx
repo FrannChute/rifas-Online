@@ -38,7 +38,7 @@ export function CashPaymentForm({ action }: CashPaymentFormProps) {
           {state.error}
         </p>
       ) : null}
-      <Button className="mt-4 w-full" disabled={isPending} type="submit">
+      <Button className="shiny-action mt-4 w-full" disabled={isPending} type="submit">
         {isPending ? "Confirmando..." : "Confirmar pago en efectivo"}
       </Button>
     </form>
