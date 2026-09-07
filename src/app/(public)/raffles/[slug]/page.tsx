@@ -146,7 +146,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
 
       <section className="relative z-10 mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
-          <div className="team-photo-soft rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo:url('/team/bolivar-u17-juego.jpg')]">
+          <div className="team-photo-soft min-h-72 rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo-position:center_58%] [--team-photo:url('/team/bolivar-u17-trio.png')] lg:min-h-80">
             <p className="text-sm font-bold uppercase tracking-normal">Bolivar U17</p>
             <h2 className="mt-2 text-2xl font-black leading-tight sm:text-3xl">
               Tu numero tambien empuja al equipo
@@ -155,6 +155,18 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
               Cada colaboracion ayuda a sostener el esfuerzo de los chicos dentro y fuera de la
               cancha.
             </p>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <div className="team-photo-soft team-photo-plain min-h-40 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_45%] [--team-photo:url('/team/bolivar-u17-juego.jpg')]">
+              <p className="mt-24 text-sm font-black">En cancha</p>
+            </div>
+            <div className="team-photo-soft team-photo-plain min-h-40 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_52%] [--team-photo:url('/team/bolivar-u17-noche-grupo.png')]">
+              <p className="mt-24 text-sm font-black">Equipo unido</p>
+            </div>
+            <div className="team-photo-soft team-photo-plain min-h-40 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_48%] [--team-photo:url('/team/bolivar-u17-finalistas.jpg')]">
+              <p className="mt-24 text-sm font-black">Semifinal U17</p>
+            </div>
           </div>
 
           <div className="club-card rounded-lg border bg-card p-5">

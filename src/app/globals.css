@@ -194,7 +194,15 @@ a {
       rgba(11, 63, 168, 0.7),
       rgba(249, 115, 22, 0.52)
     ),
-    var(--team-photo, url("/team/bolivar-u17-equipo-1.png")) center/cover;
+    var(--team-photo, url("/team/bolivar-u17-equipo-1.png")) var(--team-photo-position, center) /
+      cover;
+}
+
+.team-photo-plain::before {
+  background:
+    linear-gradient(180deg, rgba(4, 26, 74, 0.08), rgba(4, 26, 74, 0.72)),
+    var(--team-photo, url("/team/bolivar-u17-equipo-1.png")) var(--team-photo-position, center) /
+      cover;
 }
 
 .club-card {

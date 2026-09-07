@@ -62,7 +62,7 @@ export default async function HomePage() {
               </p>
             </div>
           </div>
-          <div className="team-photo-soft min-h-60 rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo:url('/team/bolivar-u17-finalistas.jpg')]">
+          <div className="team-photo-soft min-h-72 rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo-position:center_48%] [--team-photo:url('/team/bolivar-u17-finalistas.jpg')]">
             <div className="max-w-sm">
               <span className="basketball-mark mb-4" aria-hidden="true" />
               <p className="text-sm font-bold uppercase">Somos Bolivar</p>

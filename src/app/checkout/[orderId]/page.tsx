@@ -81,7 +81,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     <main className="min-h-screen club-shell text-foreground">
       {latestPayment ? (
         <ThankYouShareModal
-          imageUrl="/team/bolivar-u17-finalistas.jpg"
+          imageUrl="/team/bolivar-u17-trio.png"
           raffleName={order.raffle.name}
           raffleSlug={order.raffle.slug}
         />
@@ -190,6 +190,13 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
                   Esta rifa no tiene transferencia bancaria activa.
                 </p>
               )}
+            </div>
+
+            <div className="team-photo-soft min-h-52 rounded-lg border border-blue-200 p-4 text-white shadow-xl [--team-photo-position:center_56%] [--team-photo:url('/team/bolivar-u17-juego.jpg')]">
+              <p className="text-sm font-bold uppercase">Gracias por estar</p>
+              <p className="mt-2 max-w-56 text-xl font-black leading-tight">
+                Tu ayuda se siente en la cancha
+              </p>
             </div>
 
             {latestPayment ? (
