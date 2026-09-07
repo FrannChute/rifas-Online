@@ -10,7 +10,7 @@
     </filter>
   </defs>
   <rect width="1200" height="630" fill="#041a4a"/>
-  <image href="/team/bolivar-u17-equipo-2.png" x="0" y="-120" width="1200" height="860" preserveAspectRatio="xMidYMid slice"/>
+  <image href="/team/bolivar-u17-finalistas.jpg" x="0" y="-100" width="1200" height="820" preserveAspectRatio="xMidYMid slice"/>
   <rect width="1200" height="630" fill="url(#shade)"/>
   <rect x="62" y="62" width="1076" height="506" rx="34" fill="#ffffff" fill-opacity="0.11" stroke="#ffffff" stroke-opacity="0.3"/>
   <g transform="translate(948 66)" filter="url(#shadow)">

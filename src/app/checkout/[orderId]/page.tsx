@@ -5,6 +5,7 @@ import { ArrowLeft, CreditCard, HeartHandshake, Sparkles, Ticket } from "lucide-
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteNav } from "@/components/site-nav";
 import { getCheckoutOrder } from "@/features/orders/service";
 import { CashPaymentForm } from "@/features/payments/components/cash-payment-form";
@@ -80,7 +81,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     <main className="min-h-screen club-shell text-foreground">
       {latestPayment ? (
         <ThankYouShareModal
-          imageUrl="/team/bolivar-u17-equipo-1.png"
+          imageUrl="/team/bolivar-u17-finalistas.jpg"
           raffleName={order.raffle.name}
           raffleSlug={order.raffle.slug}
         />
@@ -100,7 +101,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <Badge variant="outline">{order.status}</Badge>
-                  <h1 className="mt-2 text-2xl font-semibold">Orden {order.publicCode}</h1>
+                  <h1 className="mt-2 text-2xl font-semibold">
+                    Compra de {order.participant.firstName} {order.participant.lastName}
+                  </h1>
                   <p className="text-sm text-muted-foreground">{order.raffle.name}</p>
                 </div>
                 <div className="text-right">
@@ -240,6 +243,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           </aside>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

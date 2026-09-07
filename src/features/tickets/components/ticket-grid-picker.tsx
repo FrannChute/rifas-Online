@@ -236,7 +236,7 @@ export function TicketGridPicker({
                   <Input id="lastName" name="lastName" required />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
-                  <Label htmlFor="email">Email opcional</Label>
+                  <Label htmlFor="email">Email (opcional)</Label>
                   <Input id="email" name="email" type="email" />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">

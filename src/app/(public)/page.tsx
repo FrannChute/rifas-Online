@@ -46,7 +46,7 @@ export default async function HomePage() {
     <main className="min-h-screen club-shell text-foreground">
       <SiteNav platformName={data.platformName} />
       <section className="relative z-10 border-b border-border/70">
-        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_0.6fr] lg:items-center">
+        <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_0.68fr] lg:items-center">
           <div className="space-y-4">
             <Badge
               className="w-fit border-blue-200 bg-white/80 text-secondary-foreground"
@@ -62,7 +62,14 @@ export default async function HomePage() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-lg border border-blue-100 bg-white/80 p-4 shadow-sm backdrop-blur">
+          <div className="team-photo-soft min-h-60 rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo:url('/team/bolivar-u17-finalistas.jpg')]">
+            <div className="max-w-sm">
+              <span className="basketball-mark mb-4" aria-hidden="true" />
+              <p className="text-sm font-bold uppercase">Somos Bolivar</p>
+              <p className="mt-2 text-2xl font-black leading-tight">Gracias por apoyar a la U17</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-lg border border-blue-100 bg-white/80 p-4 shadow-sm backdrop-blur lg:col-span-2">
             <span className="basketball-mark" aria-hidden="true" />
             <div className="grid grid-cols-2 gap-3">
               <div className="court-chip rounded-lg border border-blue-100 p-4 shadow-sm">

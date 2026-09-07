@@ -93,7 +93,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
     <main className="min-h-screen club-shell text-foreground">
       <SiteNav platformName={data.platformName} />
       <section className="relative z-10 border-b border-border/70">
-        <div className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
           <div className="space-y-5">
             <Button asChild size="sm" variant="ghost">
               <Link href="/">
@@ -144,8 +144,19 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
         </div>
       </section>
 
-      <section className="relative z-10 mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[1fr_320px]">
+      <section className="relative z-10 mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
+          <div className="team-photo-soft rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo:url('/team/bolivar-u17-juego.jpg')]">
+            <p className="text-sm font-bold uppercase tracking-normal">Bolivar U17</p>
+            <h2 className="mt-2 text-2xl font-black leading-tight sm:text-3xl">
+              Tu numero tambien empuja al equipo
+            </h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/90">
+              Cada colaboracion ayuda a sostener el esfuerzo de los chicos dentro y fuera de la
+              cancha.
+            </p>
+          </div>
+
           <div className="club-card rounded-lg border bg-card p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
