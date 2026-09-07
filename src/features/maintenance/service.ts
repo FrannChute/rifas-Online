@@ -5,13 +5,17 @@ import {
   TicketStatus,
 } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db";
+import { getBolivarPrizePhotoUrl } from "@/features/prizes/bolivar-prize-photos";
 
 const bolivarSlug = "gran-rifa-solidaria-u17-de-bolivar";
 
 type TransactionClient = Prisma.TransactionClient;
 
 function prizeImage(position: number) {
-  return `/prizes/bolivar-${position.toString().padStart(2, "0")}.svg`;
+  return (
+    getBolivarPrizePhotoUrl(position) ??
+    `/prizes/bolivar-${position.toString().padStart(2, "0")}.svg`
+  );
 }
 
 async function findBolivarRaffle(tx: TransactionClient) {

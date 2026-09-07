@@ -14,6 +14,7 @@ import {
   TicketStatus,
   UserRole,
 } from "../src/generated/prisma/client";
+import { getBolivarPrizePhotoUrl } from "../src/features/prizes/bolivar-prize-photos";
 
 const databaseUrl = process.env.DATABASE_URL;
 const seedAdminEmail = process.env.SEED_ADMIN_EMAIL;
@@ -171,7 +172,10 @@ function formatTicketLabel(number: number, padding: number) {
 }
 
 function prizeImage(position: number) {
-  return `/prizes/bolivar-${position.toString().padStart(2, "0")}.svg`;
+  return (
+    getBolivarPrizePhotoUrl(position) ??
+    `/prizes/bolivar-${position.toString().padStart(2, "0")}.svg`
+  );
 }
 
 function hashSeedPassword(password: string) {

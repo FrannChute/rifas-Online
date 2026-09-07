@@ -4,6 +4,8 @@
 
 import { useState } from "react";
 
+import { getBolivarPrizePhotoUrl } from "../bolivar-prize-photos";
+
 type PrizeImageProps = {
   name: string;
   position: number;
@@ -14,7 +16,9 @@ export function PrizeImage({ name, position, src }: PrizeImageProps) {
   const [primaryFailed, setPrimaryFailed] = useState(false);
   const [fallbackFailed, setFallbackFailed] = useState(false);
   const fallbackSrc = `/prizes/bolivar-${position.toString().padStart(2, "0")}.svg`;
-  const imageSrc = src && !primaryFailed ? src : fallbackSrc;
+  const photoSrc = getBolivarPrizePhotoUrl(position);
+  const preferredSrc = src?.startsWith("/prizes/bolivar-") ? photoSrc : (src ?? photoSrc);
+  const imageSrc = preferredSrc && !primaryFailed ? preferredSrc : fallbackSrc;
 
   if (!fallbackFailed) {
     return (
