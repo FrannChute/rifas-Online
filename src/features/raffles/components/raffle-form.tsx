@@ -60,9 +60,17 @@ function toInputDateTime(value: Date | string | null | undefined) {
   }
 
   const date = new Date(value);
-  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
-
-  return local.toISOString().slice(0, 16);
+  return new Intl.DateTimeFormat("sv-SE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "America/Argentina/Buenos_Aires",
+  })
+    .format(date)
+    .replace(" ", "T");
 }
 
 function boolDefault(value: boolean | undefined, fallback = false) {

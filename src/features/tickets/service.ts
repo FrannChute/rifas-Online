@@ -81,7 +81,9 @@ export async function listAdminTickets(input: TicketSearchInput) {
       take: pageSize,
       include: {
         raffle: { select: { name: true, slug: true } },
-        participant: { select: { firstName: true, lastName: true, email: true, phone: true } },
+        participant: {
+          select: { id: true, firstName: true, lastName: true, email: true, phone: true },
+        },
         currentOrder: { select: { publicCode: true, status: true } },
         currentPayment: { select: { status: true, method: true } },
       },

@@ -86,7 +86,7 @@ export function TicketGridPicker({
     [selectedIds, tickets],
   );
   const total = selectedTickets.length * Number(price);
-  const needsLargePurchaseConfirmation = selectedTickets.length > 10;
+  const needsLargePurchaseConfirmation = selectedTickets.length > 5;
 
   function toggleTicket(ticket: TicketGridItem) {
     if (ticket.status !== "AVAILABLE") {
@@ -214,7 +214,7 @@ export function TicketGridPicker({
             )}
             {needsLargePurchaseConfirmation ? (
               <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950">
-                <p className="font-semibold">Estas eligiendo mas de 10 numeros.</p>
+                <p className="font-semibold">Estas eligiendo mas de 5 numeros.</p>
                 <p className="mt-1 leading-5">
                   Es una ayuda muy grande para los chicos de la U17. Confirmalo solo si estas seguro
                   de continuar.

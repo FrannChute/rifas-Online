@@ -1,4 +1,4 @@
-import { Gift, Ticket } from "lucide-react";
+import { Gift, ShieldCheck } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
@@ -69,22 +69,31 @@ export default async function HomePage() {
               <p className="mt-2 text-2xl font-black leading-tight">Gracias por apoyar a la U17</p>
             </div>
           </div>
-          <div className="grid grid-cols-[auto_1fr] items-center gap-4 rounded-lg border border-blue-100 bg-white/80 p-4 shadow-sm backdrop-blur lg:col-span-2">
-            <span className="basketball-mark" aria-hidden="true" />
-            <div className="grid grid-cols-2 gap-3">
-              <div className="court-chip rounded-lg border border-blue-100 p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Ticket aria-hidden="true" className="size-4" />
-                  Rifas
+          <div className="relative overflow-hidden rounded-xl border border-blue-100 bg-white/85 p-5 shadow-sm backdrop-blur lg:col-span-2">
+            <span
+              className="basketball-mark absolute -left-3 bottom-4 opacity-90"
+              aria-hidden="true"
+            />
+            <span
+              className="basketball-hoop-mark absolute right-4 top-4 hidden sm:block"
+              aria-hidden="true"
+            />
+            <div className="grid gap-4 pl-14 sm:grid-cols-[1fr_auto] sm:items-center sm:pl-20">
+              <div>
+                <div className="flex items-center gap-2 text-sm font-semibold text-blue-950">
+                  <ShieldCheck aria-hidden="true" className="size-4 text-orange-500" />
+                  Sponsor y colaboradores
                 </div>
-                <p className="mt-2 text-2xl font-semibold">{data.raffles.length}</p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  Todo lo recaudado acompaña el viaje y el esfuerzo de Bolivar U17.
+                </p>
               </div>
-              <div className="court-chip rounded-lg border border-blue-100 p-4 shadow-sm">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="court-chip rounded-lg border border-blue-100 px-5 py-4 text-center shadow-sm">
+                <div className="flex items-center justify-center gap-2 text-sm font-semibold text-muted-foreground">
                   <Gift aria-hidden="true" className="size-4" />
                   Premios
                 </div>
-                <p className="mt-2 text-2xl font-semibold">
+                <p className="mt-1 text-4xl font-black text-blue-950">
                   {data.raffles.reduce((total, raffle) => total + raffle._count.prizes, 0)}
                 </p>
               </div>

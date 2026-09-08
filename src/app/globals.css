@@ -259,6 +259,39 @@ a {
   border-radius: 999px;
 }
 
+.basketball-hoop-mark {
+  position: relative;
+  display: inline-block;
+  width: 5rem;
+  height: 4.4rem;
+}
+
+.basketball-hoop-mark::before {
+  position: absolute;
+  top: 0;
+  left: 0.7rem;
+  width: 3.6rem;
+  height: 2rem;
+  content: "";
+  border: 0.32rem solid #f97316;
+  border-bottom-color: transparent;
+  border-radius: 999px 999px 0 0;
+  filter: drop-shadow(0 0 14px rgba(249, 115, 22, 0.42));
+}
+
+.basketball-hoop-mark::after {
+  position: absolute;
+  top: 1.75rem;
+  left: 1rem;
+  width: 3rem;
+  height: 2.1rem;
+  content: "";
+  border-right: 0.16rem solid rgba(11, 63, 168, 0.42);
+  border-bottom: 0.16rem solid rgba(11, 63, 168, 0.42);
+  border-left: 0.16rem solid rgba(11, 63, 168, 0.42);
+  transform: perspective(5rem) rotateX(54deg);
+}
+
 .court-chip {
   background: linear-gradient(135deg, rgba(249, 115, 22, 0.14), rgba(11, 63, 168, 0.12)), #ffffff;
 }

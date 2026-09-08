@@ -57,7 +57,7 @@ export function RaffleCard({ raffle }: RaffleCardProps) {
             {raffle.description}
           </p>
         </div>
-        <dl className="grid grid-cols-2 gap-3 text-sm">
+        <dl className="grid grid-cols-3 gap-3 text-sm">
           <div className="court-chip rounded-md px-3 py-2">
             <dt className="flex items-center gap-1 text-muted-foreground">
               <Ticket aria-hidden="true" className="size-3.5" />
@@ -73,17 +73,13 @@ export function RaffleCard({ raffle }: RaffleCardProps) {
             <dt className="text-muted-foreground">Premios</dt>
             <dd className="mt-1 font-semibold">{raffle._count.prizes}</dd>
           </div>
-          <div className="court-chip rounded-md px-3 py-2">
-            <dt className="text-muted-foreground">Numeros</dt>
-            <dd className="mt-1 font-semibold">{raffle._count.tickets}</dd>
-          </div>
         </dl>
         <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <CalendarDays aria-hidden="true" className="size-3.5" />
             {formatDateTime(raffle.closesAt)}
           </span>
-          <Button asChild size="sm">
+          <Button asChild className="shiny-action px-5">
             <Link href={`/raffles/${raffle.slug}`}>
               Ver numeros
               <ArrowRight aria-hidden="true" />

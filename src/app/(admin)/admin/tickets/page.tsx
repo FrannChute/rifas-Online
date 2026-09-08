@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { deleteParticipantFromAdminAction } from "@/features/participants/actions";
 import { releaseTicketsFromAdminAction } from "@/features/tickets/actions";
 import { listAdminTickets } from "@/features/tickets/service";
 import { ticketStatusLabels, ticketStatuses } from "@/features/tickets/status";
@@ -110,6 +111,20 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
         </Button>
       </div>
 
+      <div className="grid gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-rose-950 md:grid-cols-[1fr_auto]">
+        <div>
+          <h3 className="font-semibold">Limpiar compradores falsos</h3>
+          <p className="mt-1 text-sm leading-6">
+            Si alguien carga muchos numeros sin pagar, revisalo en Participantes. Podes filtrar por
+            nombre, telefono o por compradores con 6 o mas numeros, eliminarlos y liberar sus
+            tickets.
+          </p>
+        </div>
+        <Button asChild className="self-end" variant="destructive">
+          <Link href="/admin/participants?minTickets=6">Revisar personas</Link>
+        </Button>
+      </div>
+
       {data.result.tickets.length > 0 ? (
         <form action={releaseTicketsFromAdminAction} className="space-y-3">
           <div className="grid gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950 md:grid-cols-[1fr_auto]">
@@ -130,11 +145,34 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
             </Button>
           </div>
 
+          <div className="grid gap-3 rounded-lg border border-rose-300 bg-rose-50 p-4 text-rose-950 md:grid-cols-[1fr_auto]">
+            <div>
+              <h3 className="font-semibold">Eliminar participante completo</h3>
+              <p className="mt-1 text-sm leading-6">
+                Marca el comprador en la tabla y esto borra esa persona, sus ordenes/pagos y libera
+                todos sus numeros. Usalo para bromas o compras falsas.
+              </p>
+              <label className="mt-3 flex items-start gap-2 text-sm">
+                <input className="mt-1" name="confirmDelete" type="checkbox" />
+                <span>Confirmo que quiero eliminar definitivamente a la persona marcada.</span>
+              </label>
+            </div>
+            <Button
+              className="self-end"
+              formAction={deleteParticipantFromAdminAction}
+              type="submit"
+              variant="destructive"
+            >
+              Eliminar participante marcado
+            </Button>
+          </div>
+
           <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
-            <table className="w-full min-w-[980px] text-left text-sm">
+            <table className="w-full min-w-[1040px] text-left text-sm">
               <thead className="border-b border-border text-xs uppercase text-muted-foreground">
                 <tr>
                   <th className="px-4 py-3 font-medium">Liberar</th>
+                  <th className="px-4 py-3 font-medium">Eliminar persona</th>
                   <th className="px-4 py-3 font-medium">Numero</th>
                   <th className="px-4 py-3 font-medium">Estado</th>
                   <th className="px-4 py-3 font-medium">Rifa</th>
@@ -155,6 +193,18 @@ export default async function AdminTicketsPage({ searchParams }: AdminTicketsPag
                         type="checkbox"
                         value={ticket.id}
                       />
+                    </td>
+                    <td className="px-4 py-3">
+                      {ticket.participant ? (
+                        <input
+                          aria-label={`Eliminar participante ${ticket.participant.firstName} ${ticket.participant.lastName}`}
+                          name="participantIds"
+                          type="checkbox"
+                          value={ticket.participant.id}
+                        />
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 font-semibold tabular-nums">{ticket.label}</td>
                     <td className="px-4 py-3">

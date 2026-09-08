@@ -115,7 +115,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                 {raffle.description}
               </p>
             </div>
-            <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <dl className="grid grid-cols-3 gap-3">
               <div className="club-card rounded-lg border bg-card p-3">
                 <dt className="text-xs text-muted-foreground">Disponibles</dt>
                 <dd className="mt-1 text-xl font-semibold">
@@ -130,10 +130,6 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                 <dt className="text-xs text-muted-foreground">Premios</dt>
                 <dd className="mt-1 text-xl font-semibold">{raffle.prizes.length}</dd>
               </div>
-              <div className="club-card rounded-lg border bg-card p-3">
-                <dt className="text-xs text-muted-foreground">Numeros</dt>
-                <dd className="mt-1 text-xl font-semibold">{ticketCount}</dd>
-              </div>
             </dl>
           </div>
           {raffle.imageUrl ? (
@@ -146,34 +142,48 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
 
       <section className="relative z-10 mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
-          <div className="team-photo-soft min-h-72 rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo-position:center_58%] [--team-photo:url('/team/bolivar-u17-trio.png')] lg:min-h-80">
-            <p className="text-sm font-bold uppercase tracking-normal">Bolivar U17</p>
-            <h2 className="mt-2 text-2xl font-black leading-tight sm:text-3xl">
-              Tu numero tambien empuja al equipo
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-white/90">
-              Cada colaboracion ayuda a sostener el esfuerzo de los chicos dentro y fuera de la
-              cancha.
-            </p>
-          </div>
+          <section className="space-y-3" aria-labelledby="team-section-title">
+            <div>
+              <Badge className="border-blue-200 bg-white/80 text-blue-950" variant="outline">
+                Equipo
+              </Badge>
+              <h2 id="team-section-title" className="mt-2 text-xl font-semibold">
+                La rifa acompaña a Bolivar U17
+              </h2>
+            </div>
+            <div className="team-photo-soft min-h-56 rounded-xl border border-blue-200 p-5 text-white shadow-xl [--team-photo-position:center_64%] [--team-photo:url('/team/bolivar-u17-trio.png')] sm:min-h-72 lg:min-h-80">
+              <p className="text-sm font-bold uppercase tracking-normal">Bolivar U17</p>
+              <h3 className="mt-2 text-2xl font-black leading-tight sm:text-3xl">
+                Tu numero tambien empuja al equipo
+              </h3>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-white/90">
+                Cada colaboracion ayuda a sostener el esfuerzo de los chicos dentro y fuera de la
+                cancha.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="team-photo-soft team-photo-plain min-h-36 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_45%] [--team-photo:url('/team/bolivar-u17-juego.jpg')] sm:min-h-40">
+                <p className="mt-20 text-sm font-black sm:mt-24">En cancha</p>
+              </div>
+              <div className="team-photo-soft team-photo-plain min-h-36 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_52%] [--team-photo:url('/team/bolivar-u17-noche-grupo.png')] sm:min-h-40">
+                <p className="mt-20 text-sm font-black sm:mt-24">Equipo unido</p>
+              </div>
+              <div className="team-photo-soft team-photo-plain min-h-36 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_48%] [--team-photo:url('/team/bolivar-u17-finalistas.jpg')] sm:min-h-40">
+                <p className="mt-20 text-sm font-black sm:mt-24">Semifinal U17</p>
+              </div>
+            </div>
+          </section>
 
-          <div className="grid gap-3 md:grid-cols-3">
-            <div className="team-photo-soft team-photo-plain min-h-40 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_45%] [--team-photo:url('/team/bolivar-u17-juego.jpg')]">
-              <p className="mt-24 text-sm font-black">En cancha</p>
-            </div>
-            <div className="team-photo-soft team-photo-plain min-h-40 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_52%] [--team-photo:url('/team/bolivar-u17-noche-grupo.png')]">
-              <p className="mt-24 text-sm font-black">Equipo unido</p>
-            </div>
-            <div className="team-photo-soft team-photo-plain min-h-40 rounded-xl border border-blue-200 p-4 text-white shadow-sm [--team-photo-position:center_48%] [--team-photo:url('/team/bolivar-u17-finalistas.jpg')]">
-              <p className="mt-24 text-sm font-black">Semifinal U17</p>
-            </div>
-          </div>
-
-          <div className="club-card rounded-lg border bg-card p-5">
+          <section
+            className="club-card rounded-lg border bg-card p-5"
+            aria-labelledby="prizes-title"
+          >
             <div className="mb-4 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <Gift aria-hidden="true" className="size-5 text-primary" />
-                <h2 className="text-xl font-semibold">Premios</h2>
+                <h2 id="prizes-title" className="text-xl font-semibold">
+                  Premios
+                </h2>
               </div>
               <span className="basketball-mark size-10" aria-hidden="true" />
             </div>
@@ -205,8 +215,18 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
                 </article>
               ))}
             </div>
-          </div>
+          </section>
 
+          <div className="space-y-2">
+            <Badge className="border-orange-200 bg-orange-50 text-orange-800" variant="outline">
+              Numeros
+            </Badge>
+            <h2 className="text-xl font-semibold">Elegi tus numeros disponibles</h2>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Los verdes estan libres. Los reservados o pagados quedan bloqueados para evitar que
+              dos personas compren el mismo numero.
+            </p>
+          </div>
           <TicketGridPicker
             currency={raffle.currency}
             price={String(raffle.price)}
@@ -237,7 +257,9 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
               </div>
               <div>
                 <dt className="text-muted-foreground">Sorteo</dt>
-                <dd className="font-medium">{formatDateTime(raffle.drawScheduledAt)}</dd>
+                <dd className="text-base font-black text-blue-950">
+                  {formatDateTime(raffle.drawScheduledAt)}
+                </dd>
               </div>
             </dl>
           </div>

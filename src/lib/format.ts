@@ -14,5 +14,6 @@ export function formatDateTime(value: Date | string | null | undefined) {
   return new Intl.DateTimeFormat("es-AR", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "America/Argentina/Buenos_Aires",
   }).format(new Date(value));
 }

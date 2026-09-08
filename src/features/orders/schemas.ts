@@ -47,8 +47,8 @@ export function parseReservationForm(formData: FormData) {
   }
 
   const uniqueTicketIds = Array.from(new Set(ticketIds));
-  if (uniqueTicketIds.length > 10 && formData.get("largePurchaseConfirmed") !== "on") {
-    throw new Error("Confirma la compra de mas de 10 numeros para continuar.");
+  if (uniqueTicketIds.length > 5 && formData.get("largePurchaseConfirmed") !== "on") {
+    throw new Error("Confirma la compra de mas de 5 numeros para continuar.");
   }
 
   const raffleId = formData.get("raffleId");

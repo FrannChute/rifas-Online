@@ -32,8 +32,18 @@ const optionalDate = z.preprocess((value) => {
   }
 
   const trimmed = value.trim();
-  return trimmed.length > 0 ? trimmed : undefined;
-}, z.coerce.date().optional());
+  if (!trimmed) {
+    return undefined;
+  }
+
+  const hasTimeZone = /(?:z|[+-]\d{2}:\d{2})$/i.test(trimmed);
+  if (hasTimeZone) {
+    return new Date(trimmed);
+  }
+
+  const argentinaDateTime = trimmed.length === 16 ? `${trimmed}:00-03:00` : `${trimmed}-03:00`;
+  return new Date(argentinaDateTime);
+}, z.date().optional());
 
 const checkbox = z.preprocess(
   (value) => value === "on" || value === "true" || value === true,

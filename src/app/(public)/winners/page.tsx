@@ -58,7 +58,8 @@ export default async function WinnersPage() {
           <Badge variant="outline">Resultados</Badge>
           <h1 className="text-3xl font-semibold">Ganadores</h1>
           <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Ganadores publicados desde sorteos guardados en PostgreSQL.
+            Ganadores publicados desde sorteos guardados en PostgreSQL. El sorteo se realiza en vivo
+            por Instagram y los ganadores seran avisados por mensaje, telefono o email.
           </p>
         </div>
 
@@ -100,7 +101,7 @@ export default async function WinnersPage() {
           <EmptyState
             description={`Los ganadores estaran disponibles luego de realizar el sorteo${
               data.nextDrawDate ? `, previsto para ${formatDateTime(data.nextDrawDate)}` : ""
-            }.`}
+            }. El sorteo se realiza en vivo por Instagram y los ganadores seran avisados por mensaje o email.`}
             title="Todavia no hay ganadores publicados"
           />
         )}

@@ -78,6 +78,10 @@ export default async function RaffleWinnersPage({ params }: RaffleWinnersPagePro
         <div className="space-y-2">
           <Badge variant="outline">Resultados</Badge>
           <h1 className="text-3xl font-semibold">Ganadores de {raffleName}</h1>
+          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+            El sorteo se realiza en vivo por Instagram. Los ganadores seran avisados por mensaje,
+            telefono o email segun los datos cargados en la compra.
+          </p>
         </div>
 
         {data.winners.length > 0 ? (
@@ -109,7 +113,7 @@ export default async function RaffleWinnersPage({ params }: RaffleWinnersPagePro
           </div>
         ) : (
           <EmptyState
-            description={`Los ganadores estaran disponibles luego de realizar el sorteo, previsto para ${drawDate}.`}
+            description={`Los ganadores estaran disponibles luego de realizar el sorteo en vivo por Instagram, previsto para ${drawDate}. Tambien seran avisados por mensaje o email.`}
             title="Sin ganadores publicados"
           />
         )}
