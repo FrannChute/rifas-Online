@@ -259,6 +259,22 @@ a {
   border-radius: 999px;
 }
 
+.basketball-mark-small {
+  width: 2.7rem;
+  height: 2.7rem;
+  animation-duration: 4.4s;
+}
+
+.basketball-mark-glow {
+  width: 3rem;
+  height: 3rem;
+  opacity: 0.72;
+  box-shadow:
+    0 0 0 8px rgba(249, 115, 22, 0.08),
+    0 14px 36px rgba(249, 115, 22, 0.34);
+  animation-name: basketball-soft-bounce;
+}
+
 .basketball-hoop-mark {
   position: relative;
   display: inline-block;
@@ -304,6 +320,17 @@ a {
 
   50% {
     transform: translateY(-6px) rotate(5deg);
+  }
+}
+
+@keyframes basketball-soft-bounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(12deg) scale(1);
+  }
+
+  50% {
+    transform: translateY(4px) rotate(-8deg) scale(1.04);
   }
 }
 

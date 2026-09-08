@@ -1,4 +1,4 @@
-import { Gift, ShieldCheck } from "lucide-react";
+import { Gift, HeartHandshake } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { DatabaseSetupNotice } from "@/components/database-setup-notice";
@@ -69,23 +69,24 @@ export default async function HomePage() {
               <p className="mt-2 text-2xl font-black leading-tight">Gracias por apoyar a la U17</p>
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-xl border border-blue-100 bg-white/85 p-5 shadow-sm backdrop-blur lg:col-span-2">
+          <div className="relative overflow-hidden rounded-xl border border-blue-100 bg-white/90 p-5 shadow-sm backdrop-blur lg:col-span-2">
             <span
-              className="basketball-mark absolute -left-3 bottom-4 opacity-90"
+              className="basketball-mark basketball-mark-small absolute -left-2 bottom-5 opacity-90"
               aria-hidden="true"
             />
             <span
-              className="basketball-hoop-mark absolute right-4 top-4 hidden sm:block"
+              className="basketball-mark basketball-mark-glow absolute right-5 top-4 hidden sm:block"
               aria-hidden="true"
             />
             <div className="grid gap-4 pl-14 sm:grid-cols-[1fr_auto] sm:items-center sm:pl-20">
               <div>
                 <div className="flex items-center gap-2 text-sm font-semibold text-blue-950">
-                  <ShieldCheck aria-hidden="true" className="size-4 text-orange-500" />
+                  <HeartHandshake aria-hidden="true" className="size-4 text-orange-500" />
                   Sponsor y colaboradores
                 </div>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Todo lo recaudado acompaña el viaje y el esfuerzo de Bolivar U17.
+                  Todo lo recaudado apoya a Francisco Nieto Gonzalez y acompaña su esfuerzo para
+                  representar a Bolivar U17.
                 </p>
               </div>
               <div className="court-chip rounded-lg border border-blue-100 px-5 py-4 text-center shadow-sm">
