@@ -259,8 +259,12 @@ export async function updateRaffle(id: string, formData: FormData) {
       current.startNumber !== input.startNumber ||
       current.endNumber !== input.endNumber ||
       current.numberPadding !== input.numberPadding;
+    const extendingEndOnly =
+      current.startNumber === input.startNumber &&
+      current.numberPadding === input.numberPadding &&
+      input.endNumber > current.endNumber;
 
-    if (numberingChanged) {
+    if (numberingChanged && !extendingEndOnly) {
       const lockedTickets = await tx.ticket.count({
         where: {
           raffleId: id,
@@ -288,7 +292,14 @@ export async function updateRaffle(id: string, formData: FormData) {
 
     await syncPaymentMethods(tx, raffle.id, input);
 
-    if (numberingChanged) {
+    if (extendingEndOnly) {
+      await generateTickets(tx, {
+        raffleId: raffle.id,
+        startNumber: current.endNumber + 1,
+        endNumber: raffle.endNumber,
+        numberPadding: raffle.numberPadding,
+      });
+    } else if (numberingChanged) {
       await generateTickets(tx, {
         raffleId: raffle.id,
         startNumber: raffle.startNumber,
@@ -481,7 +492,13 @@ async function generateTickets(
   }
 
   const tickets = await tx.ticket.findMany({
-    where: { raffleId: input.raffleId },
+    where: {
+      raffleId: input.raffleId,
+      number: {
+        gte: input.startNumber,
+        lte: input.endNumber,
+      },
+    },
     select: {
       id: true,
       raffleId: true,
