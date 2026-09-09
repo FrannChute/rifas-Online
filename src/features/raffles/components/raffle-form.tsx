@@ -113,9 +113,9 @@ export function RaffleForm({ action, submitLabel, defaults }: RaffleFormProps) {
           <Input
             id="imageUrl"
             name="imageUrl"
-            type="url"
+            type="text"
             defaultValue={defaults?.imageUrl ?? ""}
-            placeholder="https://..."
+            placeholder="/brand/bolivar-u17-rifa.png o https://..."
           />
         </div>
 
