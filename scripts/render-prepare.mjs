@@ -15,6 +15,11 @@ function run(command, args) {
 
 const databaseUrl = process.env.DATABASE_URL;
 
+if (process.env.DEMO_MODE === "true") {
+  console.log("DEMO_MODE activo: se omiten migraciones y seed de PostgreSQL.");
+  process.exit(0);
+}
+
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is required before starting the app.");
 }
