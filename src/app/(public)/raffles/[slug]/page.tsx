@@ -12,6 +12,7 @@ import { PrizeImage } from "@/features/prizes/components/prize-image";
 import { TicketGridPicker } from "@/features/tickets/components/ticket-grid-picker";
 import { type TicketStatusValue } from "@/features/tickets/status";
 import { getPlatformSettings, getPublicRaffleBySlug } from "@/features/raffles/service";
+import { demoPlatformSettings, demoRaffle, isDemoRaffleSlug } from "@/features/demo/public-data";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { isDatabaseUnavailableError } from "@/lib/errors";
 
@@ -54,6 +55,15 @@ async function loadPublicRaffleData(slug: string) {
   } catch (error) {
     if (!isDatabaseUnavailableError(error)) {
       throw error;
+    }
+
+    if (isDemoRaffleSlug(slug)) {
+      return {
+        ok: true as const,
+        demoMode: true as const,
+        platformName: demoPlatformSettings.platformName,
+        raffle: demoRaffle,
+      };
     }
 
     return { ok: false as const };
@@ -103,6 +113,11 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
             </Button>
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
+                {"demoMode" in data && data.demoMode ? (
+                  <Badge className="border-orange-200 bg-orange-50 text-orange-800" variant="outline">
+                    Vista de demostracion
+                  </Badge>
+                ) : null}
                 <Badge variant={raffle.status === "OPEN" ? "secondary" : "outline"}>
                   {raffle.status}
                 </Badge>
@@ -232,6 +247,7 @@ export default async function PublicRafflePage({ params }: RafflePageProps) {
             price={String(raffle.price)}
             raffleId={raffle.id}
             reserveAction={reserveTicketsWithStateAction}
+            demoMode={"demoMode" in data && data.demoMode}
             tickets={raffle.tickets.map((ticket) => ({
               ...ticket,
               status: ticket.status as TicketStatusValue,

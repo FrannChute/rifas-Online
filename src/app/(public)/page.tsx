@@ -5,6 +5,7 @@ import { DatabaseSetupNotice } from "@/components/database-setup-notice";
 import { EmptyState } from "@/components/empty-state";
 import { SiteNav } from "@/components/site-nav";
 import { RaffleCard } from "@/features/raffles/components/raffle-card";
+import { demoPlatformSettings, listDemoRaffles } from "@/features/demo/public-data";
 import { getPlatformSettings, listPublicRaffles } from "@/features/raffles/service";
 import { isDatabaseUnavailableError } from "@/lib/errors";
 
@@ -24,7 +25,12 @@ async function loadHomeData() {
       throw error;
     }
 
-    return { ok: false as const };
+    return {
+      ok: true as const,
+      demoMode: true as const,
+      platformName: demoPlatformSettings.platformName,
+      raffles: listDemoRaffles(),
+    };
   }
 }
 
@@ -57,8 +63,8 @@ export default async function HomePage() {
             <div className="space-y-3">
               <h1 className="text-3xl font-semibold sm:text-4xl">{data.platformName}</h1>
               <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-                Elegi una rifa, revisa premios, disponibilidad y numeros reales cargados desde la
-                base de datos. Todo queda conectado al panel administrativo.
+                Elegi una rifa, revisa los premios y consulta la disponibilidad. Esta vista puede
+                mostrarse aunque la base de datos este temporalmente fuera de servicio.
               </p>
             </div>
           </div>

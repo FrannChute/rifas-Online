@@ -34,6 +34,7 @@ type TicketGridPickerProps = {
     previousState: ReservationActionState,
     formData: FormData,
   ) => Promise<ReservationActionState>;
+  demoMode?: boolean;
 };
 
 function matchesQuery(ticket: TicketGridItem, query: string) {
@@ -61,6 +62,7 @@ export function TicketGridPicker({
   reserveAction,
   tickets,
   totalTicketCount,
+  demoMode = false,
 }: TicketGridPickerProps) {
   const [actionState, formAction, isPending] = useActionState(reserveAction, { error: null });
   const [query, setQuery] = useState("");
@@ -182,6 +184,12 @@ export function TicketGridPicker({
             <input key={ticket.id} name="ticketIds" type="hidden" value={ticket.id} />
           ))}
           <h2 className="text-base font-semibold">Seleccion</h2>
+          {demoMode ? (
+            <p className="mt-3 rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-sm leading-5 text-orange-900">
+              Estas viendo una vista de demostracion. Las reservas se habilitan al conectar una base
+              de datos.
+            </p>
+          ) : null}
           <div className="mt-3 space-y-3">
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Numeros</span>
@@ -251,7 +259,7 @@ export function TicketGridPicker({
               ) : null}
               <Button
                 className="shiny-action w-full"
-                disabled={selectedTickets.length === 0 || isPending}
+                disabled={demoMode || selectedTickets.length === 0 || isPending}
                 type="submit"
               >
                 {isPending ? "Reservando..." : "Reservar y continuar"}
